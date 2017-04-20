@@ -20,7 +20,8 @@ class Test:
 		logging.info(" (6) Exit")
 		time.sleep(1)
 		# read from keyboard
-		transition = int(raw_input("Introduce a value: "))
+
+		transition = int(input("Introduce a value: "))
 		
 		return transition;
 	
