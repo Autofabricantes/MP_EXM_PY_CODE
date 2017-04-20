@@ -259,7 +259,7 @@ class InputOutputOutils:
 
 		else:		    
 			self.initialFingerControl(motorId, controlId)
-			logging.info("IOUTILS::fingerControl - Execute again finger control");
+			logging.info("IOUTILS::fingerControl - Execute again finger control")
 			self.fingerControl(motorId, motorDir, controlId)
 	
 
