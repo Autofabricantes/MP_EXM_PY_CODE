@@ -224,8 +224,8 @@ class InputOutputOutils:
 				finalPosition = self.multiplexorRead(controlId)
 				self.motorControl(motorId, constants.OPEN, constants.MOTOR_SPEED_MIN)
 				
-		elif(finalPosition > 500):
-			while(finalPosition > 500):
+		if(finalPosition > 800):
+			while(finalPosition > 800):
 				self.motorControl(motorId, constants.CLOSE, 100)
 				time.sleep(0.1)
 				finalPosition = self.multiplexorRead(controlId)
@@ -243,22 +243,23 @@ class InputOutputOutils:
 		logging.info("IOUTILS::fingerControl - Initial position: %i", initialPosition)
 
 		
-		if((finalPosition > 200) and (motorDir == constants.OPEN)):
+		if(finalPosition > 200):
 
 			self.motorControl(motorId, constants.OPEN , constants.MOTOR_SPEED)
-			time.sleep(1.5)
+			time.sleep(0.5)
 			self.motorControl(motorId, constants.OPEN, constants.MOTOR_SPEED_MIN)
 			finalPosition = self.multiplexorRead(controlId)
 
-		elif ((finalPosition < 800) and (motorDir == constants.CLOSE)):
+		elif (finalPosition < 800):
 
 			self.motorControl(motorId, constants.CLOSE , constants.MOTOR_SPEED)
-			time.sleep(1.5)
+			time.sleep(0.5)
 			self.motorControl(motorId, constants.CLOSE, constants.MOTOR_SPEED_MIN)
 			finalPosition = self.multiplexorRead(controlId)
 
-		else:
+		else:		    
 			self.initialFingerControl(motorId, controlId)
+			logging.info("IOUTILS::fingerControl - Execute again finger control");
 			self.fingerControl(motorId, motorDir, controlId)
 	
 
