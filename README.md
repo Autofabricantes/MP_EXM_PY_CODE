@@ -5,11 +5,8 @@
 ----------------------
 - Paths organization -
 ----------------------
-    
-  README.md: Estructura del repositorio
-  Propuesta Inicial Implementacion.doc: Planteamiento inicial para la implemenatcion
-  MpExm
-    |
+   
+    |-- README.md
     |-- autofabricantes.py --
     |-- Constants.py --------
     |-- State.py ------------    
