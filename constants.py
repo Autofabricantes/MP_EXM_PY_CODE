@@ -25,15 +25,15 @@ STATES_NUMBER  = 6
 # Inactive state
 STATE_INACTIVE = 0
 # Resting/Initial state. Open hand
-STATE_IDLE      = 1
+STATE_IDLE     = 1
 # Tongs state. Thumb + forefinger
-STATE_TONGS   = 2
+STATE_TONGS    = 2
 # Finger state. Forefinger
-STATE_FINGER  = 3
+STATE_FINGER   = 3
 # Close state. Mitten + forefinger
-STATE_CLOSE   = 4
+STATE_CLOSE    = 4
 # Fist state. Mitten + forefinger + thumb
-STATE_FIST    = 5
+STATE_FIST     = 5
 
 
 #==============================================================================
@@ -76,7 +76,7 @@ MOTOR_SPEED_MIN = 0
 # Max. Value for motors speed
 MOTOR_SPEED_MAX = 255
 # CONFIGURABLE VALUE: Motor Speed
-MOTOR_SPEED = 100
+MOTOR_SPEED     = 100
 
 
 #==============================================================================
@@ -84,45 +84,45 @@ MOTOR_SPEED = 100
 #==============================================================================
 
 # OUTPUT pin for LED RGB
-PIN_OUTPUT_LED_RGB = 13
+PIN_OUTPUT_LED_RGB       = 13
 PIN_OUTPUT_LEDSTRIPE_RGB = 10                        
 
 # Accesory Board Detection
 # int ACC_BRD
 # Multiplexer Control Crazy Pionut Assignement A
-MUX_A = 16 
+MUX_A    = 16 
 # Multiplexer Control Crazy Pionut Assignement B
-MUX_B = 14 
+MUX_B    = 14 
 # Multiplexer Control Crazy Pionut Assignement C
-MUX_C = 15 
+MUX_C    = 15 
 # Main Board Multiplexer Output
 MUX_MAIN = 0
 # Acc Board Multiplexer Output 
-MUX_ACC = 1 
+MUX_ACC  = 1 
 
 # INPUT pin for mitten related potentiometer
-PIN_OUTPUT_POTENTIOMETER_MITTEN = 2
+PIN_OUTPUT_POTENTIOMETER_MITTEN     = 2
 # INPUT pin for forefinger related potentiometer
 PIN_OUTPUT_POTENTIOMETER_FOREFINGER = 4
 # INPUT pin for thumb related potentiometer
-PIN_OUTPUT_POTENTIOMETER_THUMB = 6
+PIN_OUTPUT_POTENTIOMETER_THUMB      = 6
 
 # INPUT pin for mitten related amperimeter
-PIN_OUTPUT_CURRENT_SENSOR_MITTEN = 3
+PIN_OUTPUT_CURRENT_SENSOR_MITTEN     = 3
 # INPUT pin for forefinger related amperimeter
 PIN_OUTPUT_CURRENT_SENSOR_FOREFINGER = 5
 # INPUT pin for thumb related amperimeter
-PIN_OUTPUT_CURRENT_SENSOR_THUMB = 7
+PIN_OUTPUT_CURRENT_SENSOR_THUMB      = 7
 
 # OUTPUT pin for mitten related motor
-PIN_OUTPUT_MOTOR_MITTEN_PWM = 9
-PIN_OUTPUT_MOTOR_MITTEN = 8
+PIN_OUTPUT_MOTOR_MITTEN_PWM     = 9
+PIN_OUTPUT_MOTOR_MITTEN         = 8
 # OUTPUT pin for forefinger related motor
 PIN_OUTPUT_MOTOR_FOREFINGER_PWM = 5
-PIN_OUTPUT_MOTOR_FOREFINGER = 7
+PIN_OUTPUT_MOTOR_FOREFINGER     = 7
 # OUTPUT pin for thumb related motor
-PIN_OUTPUT_MOTOR_THUMB_PWM = 3
-PIN_OUTPUT_MOTOR_THUMB = 4
+PIN_OUTPUT_MOTOR_THUMB_PWM      = 3
+PIN_OUTPUT_MOTOR_THUMB          = 4
 
 #==============================================================================
 # Multiplexor Control Matrix
@@ -135,14 +135,36 @@ MOTOR_CONTROL_MATRIX = (
 )
 
 # MPOT_0
-CONTROL_INPUT_POTENTIOMETER_MITTEN = 2
+CONTROL_INPUT_POTENTIOMETER_MITTEN      = 2
 # CS_0
-CONTROL_INPUT_CURRENT_SENSOR_MITTEN = 3
+CONTROL_INPUT_CURRENT_SENSOR_MITTEN     = 3
 # MPOT_1
-CONTROL_INPUT_POTENTIOMETER_FOREFINGER = 4
+CONTROL_INPUT_POTENTIOMETER_FOREFINGER  = 4
 # CS_1
 CONTROL_INPUT_CURRENT_SENSOR_FOREFINGER = 5
 # MPOT_2
-CONTROL_INPUT_POTENTIOMETER_THUMB = 6
+CONTROL_INPUT_POTENTIOMETER_THUMB       = 6
 # CS_2
-CONTROL_INPUT_CURRENT_SENSOR_THUMB = 7
+CONTROL_INPUT_CURRENT_SENSOR_THUMB      = 7
+
+
+
+#==============================================================================
+# PID FUNCTION
+#==============================================================================
+
+# Tuning PID parameters
+# Initial Proportional Gain
+PID_KP     = 1
+# Initial Integral Gain
+PID_KI     = 1
+# Initial Differential Gain
+PID_KD     = 1
+
+# Angle limits [-30, 30]
+PID_LIMITS = 30
+
+
+
+
+

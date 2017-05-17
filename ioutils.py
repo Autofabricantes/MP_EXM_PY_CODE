@@ -2,6 +2,8 @@ import logging
 import time
 import constants
 
+from numpy import interp
+
 from test import Test
 from state import State 
 
@@ -55,18 +57,7 @@ class InputOutputOutils:
 		# pinMode(constants.PIN_OUTPUT_MOTOR_THUMB_PWM, constants.OUTPUT)
 		# pinMode(constants.PIN_OUTPUT_MOTOR_THUMB, constants.OUTPUT)
 		
-		logging.info("IOUTILS::initOutput - Initialize mitten")
-		self.initialFingerControl(constants.MITTEN, constants.CONTROL_INPUT_POTENTIOMETER_MITTEN)
-		time.sleep(1)
-
-		logging.info("IOUTILS::initOutput - Initialize forefinger")
-		self.initialFingerControl(constants.FOREFINGER, constants.CONTROL_INPUT_POTENTIOMETER_FOREFINGER)
-		time.sleep(1)
-
-		logging.info("IOUTILS::initOutput - Initialize thumb")
-		self.initialFingerControl(constants.THUMB, constants.CONTROL_INPUT_POTENTIOMETER_THUMB)
-		time.sleep(1)
-
+		
 	# Reset of OUTPUT elements
 	def resetOutputElements(self):
 
@@ -210,61 +201,84 @@ class InputOutputOutils:
 
 	# Initialize fingers position
 	def initialFingerControl(self, motorId, controlId):
+	
+		logging.info("IOUTILS::initialFingerControlPID")
+		
+		input = interp(self.multiplexorRead(controlId), [0, 1024], [constants.MOTOR_SPEED_MIN, constants.MOTOR_SPEED])
+		logging.info("IOUTILS::initialFingerControlPID - input: %f", input)
 
-		logging.info("IOUTILS::initialFingerControl")
+		setpoint = 0
+		logger.info("IOUTILS::initialFingerControlPID - initialization setpoint: %f", setpoint)
 
-		initialPosition = self.multiplexorRead(controlId)
-		finalPosition = initialPosition
-		logging.info("IOUTILS::initialFingerControl - Initial position: %i", initialPosition)
-
-		if(finalPosition < 200):
-			while(finalPosition < 200):
-				self.motorControl(motorId, constants.OPEN, 100);
-				time.sleep(0.1);
-				finalPosition = self.multiplexorRead(controlId)
-				self.motorControl(motorId, constants.OPEN, constants.MOTOR_SPEED_MIN)
-				
-		if(finalPosition > 800):
-			while(finalPosition > 800):
-				self.motorControl(motorId, constants.CLOSE, 100)
-				time.sleep(0.1)
-				finalPosition = self.multiplexorRead(controlId)
-				self.motorControl(motorId, constants.CLOSE, constants.MOTOR_SPEED_MIN);
+		if(input > 0):
+			#pid = PID(input, output, setpoint, PID_KP, PID_KI, PID_KD, REVERSE)
+			motorDir = constants.OPEN
 	
 
-		logging.info("IOUTILS::initialFingerControl - Final position: %i", finalPosition)
+		#Turn on the PID loop
+		#pid.SetMode(AUTOMATIC)
+		#pid.SetOutputLimits(0,MOTOR_SPEED)
+
+		while(abs(input - setpoint) >  PID_LIMITS):
+
+			input = interp(self.multiplexorRead(controlId), [0, 1024], [constants.MOTOR_SPEED_MIN, constants.MOTOR_SPEED])
+			#input = multiplexorRead(controlId);
+
+			#pid.Compute()
+
+			motorControl(motorId, motorDir, round(output))
+
+			input = interp(self.multiplexorRead(controlId), [0, 1024], [constants.MOTOR_SPEED_MIN, constants.MOTOR_SPEED])
+			#input = multiplexorRead(controlId);
+			logger.info("IOUTILS::initialFingerControlPID - loop input: %f", input);
+			logger.info("IOUTILS::initialFingerControlPID - loop output: %f", output)
+
+		logging.info("IOUTILS::initialFingerControlPID - Stop motor")
+		self.motorControl(motorId, motorDir, constants.MOTOR_SPEED_MIN)
+
 
 
 	# Finger control method
 	def fingerControl(self, motorId, motorDir, controlId):
-
-		initialPosition = self.multiplexorRead(controlId)
-		finalPosition = initialPosition
-		logging.info("IOUTILS::fingerControl - Initial position: %i", initialPosition)
-
 		
-		if(finalPosition > 200):
-
-			self.motorControl(motorId, constants.OPEN , constants.MOTOR_SPEED)
-			time.sleep(0.5)
-			self.motorControl(motorId, constants.OPEN, constants.MOTOR_SPEED_MIN)
-			finalPosition = self.multiplexorRead(controlId)
-
-		elif (finalPosition < 800):
-
-			self.motorControl(motorId, constants.CLOSE , constants.MOTOR_SPEED)
-			time.sleep(0.5)
-			self.motorControl(motorId, constants.CLOSE, constants.MOTOR_SPEED_MIN)
-			finalPosition = self.multiplexorRead(controlId)
-
-		else:		    
-			self.initialFingerControl(motorId, controlId)
-			logging.info("IOUTILS::fingerControl - Execute again finger control")
-			self.fingerControl(motorId, motorDir, controlId)
-	
-
-		logging.info("IOUTILS::fingerControl - Final position: %i", finalPosition)
+		# logging.info("IOUTILS::fingerControlPID")		
 		
+		#input = interp(multiplexorRead(controlId), [0, 1024], [constants.MOTOR_SPEED_MIN, constants.MOTOR_SPEED])		
+	    #input = multiplexorRead.multiplexorRead(controlId)
+	    
+   	    #logging.info("IOUTILS::fingerControlPID - input: %f", input)
+   	    
+   	    if (motorDir == constants.OPEN):	    	   	    	    		
+   	    	setpoint = constants.MOTOR_SPEED_MIN
+   	    	logging.info("IOUTILS::fingerControlPID - OPEN - final setpoint: %f", setpoint)
+   	    	   	    	
+   	    else:
+    	 	setpoint = constants.MOTOR_SPEED
+    	 	logging.info("IOUTILS::fingerControlPID - CLOSE - final setpoint: %f", setpoint)  
+    		# Initialize PID
+    	 	# pid = PID(&input, &output, &setpoint, PID_KP, PID_KI, PID_KD, DIRECT)
+    	 	    	 			
+    	# Turn on the PID loop
+     	# pid.SetMode(AUTOMATIC)
+      	# pid.SetOutputLimits(0, MOTOR_SPEED)
+      	
+		while(abs(input - setpoint) >  constants.PID_LIMITS):
+
+		  	input = interp(self.multiplexorRead(controlId),[0,1023],[constants.MOTOR_SPEED_MIN, constants.MOTOR_SPEED])
+    	  	#input = multiplexorRead(controlId);
+
+    	 	logger.info("IOUTILS::fingerControlPID - input: %f", input)
+
+    	 	#pid.Compute();
+      
+    	 	self.motorControl(motorId, motorDir, round(output))
+
+    	 	logging.info("IOUTILS::fingerControlPID - output: %f", output)
+    	 	
+    	logging.info("IOUTILS::fingerControlPID - Stopping motor")
+    	self.motorControl(motorId, motorDir, constants.MOTOR_SPEED_MIN)
+
+
 
 	# Motor Control method
 	def motorControl(self, motorID, motorDir, motorSpeed): 

@@ -23,7 +23,6 @@ class AutofabricantesExm:
 
         self.inputOutputUtils = InputOutputOutils();
         self.inputOutputUtils.initializeInputElements()
-
         self.inputOutputUtils.initializeOutputElements()
       
   
