@@ -2,7 +2,7 @@ import logging
 import time
 import constants
 
-from numpy import interp
+import numpy
 
 from test import Test
 from state import State
@@ -245,40 +245,38 @@ class InputOutputOutils:
 		logging.info("IOUTILS::fingerControlPID")		
 		
 		input = interp(multiplexorRead(controlId), [0, 1024], [constants.MOTOR_SPEED_MIN, constants.MOTOR_SPEED])		
-	   	input = multiplexorRead.multiplexorRead(controlId)
-	    
-   	    logging.info("IOUTILS::fingerControlPID - input: %f", input)
-   	    
-   	    if (motorDir == constants.OPEN):	    	   	    	    		
-   	    	setpoint = constants.MOTOR_SPEED_MIN
-   	    	logging.info("IOUTILS::fingerControlPID - OPEN - final setpoint: %f", setpoint)
-   	    	   	    	
-   	    else:
-    	 	setpoint = constants.MOTOR_SPEED
-    	 	logging.info("IOUTILS::fingerControlPID - CLOSE - final setpoint: %f", setpoint)  
-    		# Initialize PID
-    	 	pid = PID(input, output, setpoint, PID_KP, PID_KI, PID_KD, DIRECT)
+		input = multiplexorRead.multiplexorRead(controlId)
+			   	
+		logging.info("IOUTILS::fingerControlPID - input: %f", input)
+		
+		if motorDir == constants.OPEN:
+			logging.info("IOUTILS::fingerControlPID - OPEN - final setpoint: %f", setpoint)	    	   	    	    					
+			setpoint = constants.MOTOR_SPEED_MIN
+		else:
+			setpoint = constants.MOTOR_SPEED
+			logging.info("IOUTILS::fingerControlPID - CLOSE - final setpoint: %f", setpoint)  
+			# Initialize PID
+			pid = PID(input, output, setpoint, PID_KP, PID_KI, PID_KD, pid.DIRECT)
     	 	    	 			
     	# Turn on the PID loop
-     	pid.SetMode(AUTOMATIC)
-      	pid.SetOutputLimits(0, MOTOR_SPEED)
-      	
+		pid.SetMode(AUTOMATIC)
+		pid.SetOutputLimits(0, MOTOR_SPEED)
+		
 		while(abs(input - setpoint) >  constants.PID_LIMITS):
+			
+			input = interp(self.multiplexorRead(controlId),[0,1023],[constants.MOTOR_SPEED_MIN, constants.MOTOR_SPEED])
+			input = multiplexorRead(controlId)
 
-		  	input = interp(self.multiplexorRead(controlId),[0,1023],[constants.MOTOR_SPEED_MIN, constants.MOTOR_SPEED])
-    	  	input = multiplexorRead(controlId);
-
-    	 	logger.info("IOUTILS::fingerControlPID - input: %f", input)
-
-    	 	pid.compute();
-      
-    	 	self.motorControl(motorId, motorDir, round(output))
-
-    	 	logging.info("IOUTILS::fingerControlPID - output: %f", output)
-    	 	
-    	logging.info("IOUTILS::fingerControlPID - Stopping motor")
-    	self.motorControl(motorId, motorDir, constants.MOTOR_SPEED_MIN)
-
+			logger.info("IOUTILS::fingerControlPID - input: %f", input)
+			
+			pid.compute();
+     		
+			self.motorControl(motorId, motorDir, round(output))
+			
+			logging.info("IOUTILS::fingerControlPID - output: %f", output)
+			
+		logging.info("IOUTILS::fingerControlPID - Stopping motor")			
+		self.motorControl(motorId, motorDir, constants.MOTOR_SPEED_MIN)
 
 
 	# Motor Control method

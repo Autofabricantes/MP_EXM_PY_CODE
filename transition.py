@@ -10,7 +10,7 @@ class Transition:
 
     def __init__(self):
         logging.debug("TRANS::Transition")
-		self.currentState = constants.STATE_INACTIVE
+        self.currentState = constants.STATE_INACTIVE
         self.inputOutputUtils = InputOutputOutils()
 
     def reset(self):
@@ -18,8 +18,8 @@ class Transition:
         self.transitionToInactive()
 
     def getTransitionToPerform(self, state):
-        logging.debug("TRANS::getTrans2Perform")		
-		self.currentState = state
+        logging.debug("TRANS::getTrans2Perform")
+        self.currentState = state
         return self.inputOutputUtils.getTransitionToPerform(state)
 
     def transitionToInactive(self):
@@ -30,22 +30,21 @@ class Transition:
 
     def transitionToIdle(self):
         logging.debug("TRANS::trans2Idle")
-		
-		if(self.currentState == constants.STATE_INACTIVE):
-			logging.debug("TRANS::trans2Inactive")
-			self.__openMitten()
-			self.__openForefinger()
-			self.__openThumb()
+        
+        if(self.currentState == constants.STATE_INACTIVE):
+            logging.debug("TRANS::trans2Inactive")
+            self.__openMitten()
+            self.__openForefinger()
+            self.__openThumb()
+        else:
+            logging.info("TRANS::transitionToIdle - Initialize mitten")
+            self.initialFingerControl(constants.MITTEN, constants.CONTROL_INPUT_POTENTIOMETER_MITTEN)			
+            
+            logging.info("TRANS::transitionToIdle - Initialize forefinger")
+            self.initialFingerControl(constants.FOREFINGER, constants.CONTROL_INPUT_POTENTIOMETER_FOREFINGER)
 			
-		else:
-			logging.info("TRANS::transitionToIdle - Initialize mitten")
-			self.initialFingerControl(constants.MITTEN, constants.CONTROL_INPUT_POTENTIOMETER_MITTEN)			
-
-			logging.info("TRANS::transitionToIdle - Initialize forefinger")
-			self.initialFingerControl(constants.FOREFINGER, constants.CONTROL_INPUT_POTENTIOMETER_FOREFINGER)
-			
-			logging.info("TRANS::transitionToIdle - Initialize thumb")
-			self.initialFingerControl(constants.THUMB, constants.CONTROL_INPUT_POTENTIOMETER_THUMB)
+            logging.info("TRANS::transitionToIdle - Initialize thumb")
+            self.initialFingerControl(constants.THUMB, constants.CONTROL_INPUT_POTENTIOMETER_THUMB)
 			
 
     def transitionToTongs(self):
