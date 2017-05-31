@@ -4,6 +4,7 @@ import constants
 from state import State
 from transition import Transition
 from test import Test
+import ioutils
 
 class StateMachine: 
 
@@ -11,12 +12,12 @@ class StateMachine:
 # PUBLIC METHODS                                                             
 #==============================================================================
 
-    def __init__(self):
+    def __init__(self, ioutils):
         
         # State machine's state
         self.state = State()
         # State machine's transition
-        self.transition = Transition()
+        self.transition = Transition(ioutils)
         # test class to handle LEDs colors depending on current state
         self.test = Test()
 
@@ -87,6 +88,6 @@ class StateMachine:
 
         else:
             
-            logging.debug("STM::executeTrans - Invalid transition: %i", self.transitionToPeform)
+            logging.debug("STM::executeTrans - Invalid transition: %i", transitionToPeform)
 
 

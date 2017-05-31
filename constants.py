@@ -1,3 +1,5 @@
+import RPi.GPIO as GPIO
+
 #==============================================================================
 # GENERAL                                                                   
 #==============================================================================
@@ -21,19 +23,19 @@ THUMB       = 2
 #==============================================================================
 
 # State Number
-STATES_NUMBER  = 6
+STATES_NUMBER   = 6
 # Inactive state
-STATE_INACTIVE = 0
+STATE_INACTIVE  = 0
 # Resting/Initial state. Open hand
-STATE_IDLE     = 1
+STATE_IDLE      = 1
 # Tongs state. Thumb + forefinger
-STATE_TONGS    = 2
+STATE_TONGS     = 2
 # Finger state. Forefinger
-STATE_FINGER   = 3
+STATE_FINGER    = 3
 # Close state. Mitten + forefinger
-STATE_CLOSE    = 4
+STATE_CLOSE     = 4
 # Fist state. Mitten + forefinger + thumb
-STATE_FIST     = 5
+STATE_FIST      = 5
 
 
 #==============================================================================
@@ -56,9 +58,8 @@ TRANSITION_TO_CLOSE    = 4
 TRANSITION_TO_FIST     = 5
 
 # Fingers position matrix from states definition
-
 FINGER_POSITION_MATRIX = (
-    # MITTEN   FORE  THUMB
+# MITTEN   FORE  THUMB
     ( OPEN,  OPEN,  OPEN  ), # STATE_INACTIVE
     ( OPEN,  OPEN,  OPEN  ), # STATE_IDLE
     ( OPEN,  CLOSE, CLOSE ), # STATE_TONGS
@@ -66,6 +67,7 @@ FINGER_POSITION_MATRIX = (
     ( CLOSE, CLOSE, OPEN  ), # STATE_CLOSE
     ( CLOSE, CLOSE, CLOSE )  # STATE_FIST
 )
+
 
 #==============================================================================
 # MOTORS                                                                
@@ -78,93 +80,75 @@ MOTOR_SPEED_MAX = 255
 # CONFIGURABLE VALUE: Motor Speed
 MOTOR_SPEED     = 100
 
-
 #==============================================================================
 # PIN DESCRIPTION                                                           
 #==============================================================================
 
-# OUTPUT pin for LED RGB
-PIN_OUTPUT_LED_RGB       = 13
-PIN_OUTPUT_LEDSTRIPE_RGB = 10                        
+#------------------------------------------------------------------------------
+# OUTPUT
+#------------------------------------------------------------------------------ 
 
-# Accesory Board Detection
-# int ACC_BRD
-# Multiplexer Control Crazy Pionut Assignement A
-MUX_A    = 16 
-# Multiplexer Control Crazy Pionut Assignement B
-MUX_B    = 14 
-# Multiplexer Control Crazy Pionut Assignement C
-MUX_C    = 15 
-# Main Board Multiplexer Output
-MUX_MAIN = 0
-# Acc Board Multiplexer Output 
-MUX_ACC  = 1 
+# V_BAT_OK: LED Battery charge indicator for right levels
+PIN_OUTPUT_LED_VBAT_OK   = 4
 
-# INPUT pin for mitten related potentiometer
-PIN_OUTPUT_POTENTIOMETER_MITTEN     = 2
-# INPUT pin for forefinger related potentiometer
-PIN_OUTPUT_POTENTIOMETER_FOREFINGER = 4
-# INPUT pin for thumb related potentiometer
-PIN_OUTPUT_POTENTIOMETER_THUMB      = 6
+# V_BAT_LOW: LED Battery charge indicator for low level
+PIN_OUTPUT_LED_VBAT_LOW = 17
 
-# INPUT pin for mitten related amperimeter
-PIN_OUTPUT_CURRENT_SENSOR_MITTEN     = 3
-# INPUT pin for forefinger related amperimeter
-PIN_OUTPUT_CURRENT_SENSOR_FOREFINGER = 5
-# INPUT pin for thumb related amperimeter
-PIN_OUTPUT_CURRENT_SENSOR_THUMB      = 7
+# PW_Q: Pin for the power cut control
+PIN_OUTPUT_POWER_CUT    = 27
 
-# OUTPUT pin for mitten related motor
-PIN_OUTPUT_MOTOR_MITTEN_PWM     = 9
-PIN_OUTPUT_MOTOR_MITTEN         = 8
-# OUTPUT pin for forefinger related motor
-PIN_OUTPUT_MOTOR_FOREFINGER_PWM = 5
-PIN_OUTPUT_MOTOR_FOREFINGER     = 7
-# OUTPUT pin for thumb related motor
-PIN_OUTPUT_MOTOR_THUMB_PWM      = 3
-PIN_OUTPUT_MOTOR_THUMB          = 4
 
-#==============================================================================
-# Multiplexor Control Matrix
-#==============================================================================
+#------------------------------------------------------------------------------
+# INPUT
+#------------------------------------------------------------------------------ 
 
-MOTOR_CONTROL_MATRIX = (
-    (PIN_OUTPUT_MOTOR_MITTEN_PWM, PIN_OUTPUT_MOTOR_MITTEN),
-    (PIN_OUTPUT_MOTOR_FOREFINGER_PWM, PIN_OUTPUT_MOTOR_FOREFINGER),
-    (PIN_OUTPUT_MOTOR_THUMB_PWM, PIN_OUTPUT_MOTOR_THUMB)
-)
+# TOVERIFY - SW_TAC_0: Button for shut down
+PIN_INPUT_BUTTON_0 = 19
 
-# MPOT_0
-CONTROL_INPUT_POTENTIOMETER_MITTEN      = 2
-# CS_0
-CONTROL_INPUT_CURRENT_SENSOR_MITTEN     = 3
-# MPOT_1
-CONTROL_INPUT_POTENTIOMETER_FOREFINGER  = 4
-# CS_1
-CONTROL_INPUT_CURRENT_SENSOR_FOREFINGER = 5
-# MPOT_2
-CONTROL_INPUT_POTENTIOMETER_THUMB       = 6
-# CS_2
-CONTROL_INPUT_CURRENT_SENSOR_THUMB      = 7
+# TOVERIFY - SW_TAC_1: Button for reset
+PIN_INPUT_BUTTON_1 = 26
 
+# Switches to control states manually
+# SW_DIP_0
+PIN_INPUT_SWITCH_0 = 22
+# SW_DIP_1
+PIN_INPUT_SWITCH_1 =  5
+# SW_DIP_2
+PIN_INPUT_SWITCH_2 =  6
+# SW_DIP_3
+PIN_INPUT_SWITCH_3 = 13
+
+#------------------------------------------------------------------------------
+# BUSES
+#------------------------------------------------------------------------------ 
+
+# I2C PWM CIRCUITS (motors activation)
+# SDA: I2C Data
+PIN_BUS_SDA = 2
+# SCL: I2C Clock
+PIN_BUS_SCL = 3
+
+# SPI: Serial Peripheral Interface Bus (Analog-Digital conversion)
+# MOSI: Master Output Slave Input, or Master Out Slave In (data output from master)
+PIN_BUS_MOSI   = 10
+# MISO:  Master Input Slave Output, or Master In Slave Out (data output from slave)
+PIN_BUS_MISO   =  9
+# SCLK Serial Clock (output from master)
+PIN_BUS_SCLK   = 11
+
+# ADC_CS: Chip Select (reading from potentiometers)
+PIN_BUS_ADC_CS = 7
 
 
 #==============================================================================
-# PID FUNCTION
+# SWITCHES' RELATED STATES
 #==============================================================================
 
-# Tuning PID parameters
-# Initial Proportional Gain
-PID_KP     = 1
-# Initial Integral Gain
-PID_KI     = 1
-# Initial Differential Gain
-PID_KD     = 1
+STATE_SWITCH_0 = STATE_IDLE
+STATE_SWITCH_1 = STATE_TONGS
+STATE_SWITCH_2 = STATE_FINGER
+STATE_SWITCH_3 = STATE_CLOSE
 
-# Angle limits [-30, 30]
-PID_LIMITS = 30
-
-
-
+        
 
 

@@ -4,8 +4,6 @@ import time
 from ioutils import InputOutputOutils
 from statemachine import StateMachine
 
-# TODO: Threads
-
 class AutofabricantesExm:
     
     def __init__(self):        
@@ -18,12 +16,12 @@ class AutofabricantesExm:
     
         logging.info("\n---> Setup")
 
-        self.stateMachine = StateMachine()
-        self.stateMachine.start()
-
-        self.inputOutputUtils = InputOutputOutils();
+        self.inputOutputUtils = InputOutputOutils()
         self.inputOutputUtils.initializeInputElements()
         self.inputOutputUtils.initializeOutputElements()
+        
+        self.stateMachine = StateMachine(self.inputOutputUtils)
+        self.stateMachine.start()
       
   
     def loop(self):

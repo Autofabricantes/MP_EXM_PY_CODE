@@ -5,8 +5,24 @@
 import datetime
 import sys
 
+#==============================================================================
+# PID CONSTANTS
+#==============================================================================
+
+# Direction
 DIRECT  = 1
 REVERSE = 0
+
+# Tuning PID parameters
+# Initial Proportional Gain
+PID_KP     = 1
+# Initial Integral Gain
+PID_KI     = 1
+# Initial Differential Gain
+PID_KD     = 1
+
+# Angle limits [-30, 30]
+PID_LIMITS = 100
 
 
 class PID(object):
@@ -29,8 +45,8 @@ class PID(object):
         self._sample_timedelta = None
         self._output_value = None
         self._last_input = None
-        self._out_min = -sys.maxint - 1
-        self._out_max = sys.maxint
+        self._out_min = -sys.maxsize - 1
+        self._out_max = sys.maxsize
 
         self.set_output_limits(0, 255)
         self.sample_time = 100  # milliseconds

@@ -1,5 +1,6 @@
 import logging
 
+import constants
 from ioutils import InputOutputOutils
 
 class Transition:
@@ -8,10 +9,10 @@ class Transition:
 # PUBLIC METHODS                                                             
 #==============================================================================
 
-    def __init__(self):
+    def __init__(self, ioutils):
         logging.debug("TRANS::Transition")
         self.currentState = constants.STATE_INACTIVE
-        self.inputOutputUtils = InputOutputOutils()
+        self.inputOutputUtils = ioutils
 
     def reset(self):
         logging.debug("TRANS::reset")
@@ -38,13 +39,13 @@ class Transition:
             self.__openThumb()
         else:
             logging.info("TRANS::transitionToIdle - Initialize mitten")
-            self.initialFingerControl(constants.MITTEN, constants.CONTROL_INPUT_POTENTIOMETER_MITTEN)			
+            self.inputOutputUtils.initialFingerControl(constants.MITTEN)			
             
             logging.info("TRANS::transitionToIdle - Initialize forefinger")
-            self.initialFingerControl(constants.FOREFINGER, constants.CONTROL_INPUT_POTENTIOMETER_FOREFINGER)
+            self.inputOutputUtils.initialFingerControl(constants.FOREFINGER)
 			
             logging.info("TRANS::transitionToIdle - Initialize thumb")
-            self.initialFingerControl(constants.THUMB, constants.CONTROL_INPUT_POTENTIOMETER_THUMB)
+            self.inputOutputUtils.initialFingerControl(constants.THUMB)
 			
 
     def transitionToTongs(self):
