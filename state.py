@@ -1,5 +1,6 @@
-import constants
 import logging
+
+from constants import *
 
 class State:
 		
@@ -11,12 +12,12 @@ class State:
 
 		logging.debug("STATE::State");
 		# Current state
-		self.currentState = constants.STATE_INACTIVE;
+		self.currentState = STATE_INACTIVE;
 
 	# Resets current state
 	def reset(self):
 		logging.debug("STATE::reset")
-		self.currentState = constants.STATE_INACTIVE
+		self.currentState = STATE_INACTIVE
 		
 	# Getter
 	def getCurrentState(self):
@@ -35,7 +36,7 @@ class State:
 	# current state
 	def getMittenPosition(self):
 		
-		fingerPosition = constants.FINGER_POSITION_MATRIX[self.currentState][constants.MITTEN]
+		fingerPosition = FINGER_POSITION_MATRIX[self.currentState][MITTEN]
 		logging.info("STATE::getMittenPos - State[%i] - Position[%i]", self.currentState,fingerPosition)
 
 		return fingerPosition;
@@ -45,7 +46,7 @@ class State:
 	# current state
 	def getForefingerPosition(self):
 		
-		fingerPosition   = constants.FINGER_POSITION_MATRIX[self.currentState][constants.FOREFINGER]
+		fingerPosition   = FINGER_POSITION_MATRIX[self.currentState][FOREFINGER]
 		logging.debug("STATE::getForefingerPos - State[%i] - Position[%i]", self.currentState,fingerPosition)
 		
 		return fingerPosition
@@ -55,7 +56,7 @@ class State:
 	# current state
 	def getThumbPosition(self):
 		
-		fingerPosition   = constants.FINGER_POSITION_MATRIX[self.currentState][constants.THUMB]
+		fingerPosition   = FINGER_POSITION_MATRIX[self.currentState][THUMB]
 		logging.debug("STATE::getThumbPos - State[%i] - Position[%i]", self.currentState,fingerPosition)
 
 		return fingerPosition

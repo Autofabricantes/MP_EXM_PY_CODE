@@ -1,11 +1,12 @@
 import logging
 import time
-import constants
 import pid
 import sys
 
 import RPi.GPIO as GPIO
 from numpy import interp
+
+from constants import *
 
 from test import Test
 from state import State
@@ -33,12 +34,12 @@ class InputOutputOutils:
 
 		logging.debug("IOUTILS::initInput")
 		
-		GPIO.setup(constants.PIN_INPUT_BUTTON_0, GPIO.IN)
-		GPIO.setup(constants.PIN_INPUT_BUTTON_1, GPIO.IN)
-		GPIO.setup(constants.PIN_INPUT_SWITCH_0, GPIO.IN)
-		GPIO.setup(constants.PIN_INPUT_SWITCH_1, GPIO.IN)
-		GPIO.setup(constants.PIN_INPUT_SWITCH_2, GPIO.IN)
-		GPIO.setup(constants.PIN_INPUT_SWITCH_3, GPIO.IN)
+		GPIO.setup(PIN_INPUT_BUTTON_0, GPIO.IN)
+		GPIO.setup(PIN_INPUT_BUTTON_1, GPIO.IN)
+		GPIO.setup(PIN_INPUT_SWITCH_0, GPIO.IN)
+		GPIO.setup(PIN_INPUT_SWITCH_1, GPIO.IN)
+		GPIO.setup(PIN_INPUT_SWITCH_2, GPIO.IN)
+		GPIO.setup(PIN_INPUT_SWITCH_3, GPIO.IN)
 		
 
 
@@ -59,9 +60,9 @@ class InputOutputOutils:
 
 		logging.info("IOUTILS::initOutput")
 		
-		GPIO.setup(constants.PIN_OUTPUT_LED_VBAT_OK, GPIO.OUT)
-		GPIO.setup(constants.PIN_OUTPUT_LED_VBAT_LOW, GPIO.OUT)
-		GPIO.setup(constants.PIN_OUTPUT_POWER_CUT, GPIO.OUT)		
+		GPIO.setup(PIN_OUTPUT_LED_VBAT_OK, GPIO.OUT)
+		GPIO.setup(PIN_OUTPUT_LED_VBAT_LOW, GPIO.OUT)
+		GPIO.setup(PIN_OUTPUT_POWER_CUT, GPIO.OUT)		
 		
 		
 	# Reset of OUTPUT elements
@@ -153,129 +154,91 @@ class InputOutputOutils:
 
 		logging.debug("IOUTILS::openMitten")
 
-		if(self.getMittenPosition() == constants.CLOSE):
+		if(self.getMittenPosition() == CLOSE):
 			logging.info("IOUTILS::openMitten-OPEN")
-			self.fingerControl(constants.MITTEN, constants.OPEN)
+			self.fingerControl(MITTEN, OPEN)
 							
 	# Moves mitten to CLOSE position if necessary
 	def closeMitten(self):
 
 		logging.debug("IOUTILS::closeMitten")
 
-		if(self.getMittenPosition() == constants.OPEN):
+		if(self.getMittenPosition() == OPEN):
 			logging.info("IOUTILS::closeMitten - CLOSE");
-			self.fingerControl(constants.MITTEN, constants.CLOSE)
+			self.fingerControl(MITTEN, CLOSE)
 	
 	# Moves forefinger to OPEN position if necessary
 	def openForefinger(self): 
 
 		logging.debug("IOUTILS::openForefinger")
 
-		if(self.getForefingerPosition() == constants.CLOSE):
+		if(self.getForefingerPosition() == CLOSE):
 			logging.debug("IOUTILS::openForefinger - OPEN")
-			self.fingerControl(constants.FOREFINGER, constants.OPEN)
+			self.fingerControl(FOREFINGER, OPEN)
 			
 	# Moves forefinger to CLOSE position if necessary
 	def closeForefinger(self):
 
 		logging.debug("IOUTILS::closeForefinger")
 
-		if(self.getForefingerPosition() == constants.OPEN):
+		if(self.getForefingerPosition() == OPEN):
 			logging.debug("IOUTILS::closeForefinger - CLOSE")
-			self.fingerControl(constants.FOREFINGER, constants.CLOSE)
+			self.fingerControl(FOREFINGER, CLOSE)
 			
 	# Moves thumb to OPEN position if necessary
 	def openThumb(self):
 
 		logging.debug("IOUTILS::openThumb");
 
-		if(self.getThumbPosition() == constants.CLOSE):
+		if(self.getThumbPosition() == CLOSE):
 			logging.debug("IOUTILS::openThumb - OPEN")
-			self.fingerControl(constants.THUMB, constants.OPEN)
+			self.fingerControl(THUMB, OPEN)
 	
 	# Moves mitten to CLOSE position if necessary
 	def closeThumb(self):
 
 		logging.debug("IOUTILS::closeThumb")
 
-		if(self.getThumbPosition() == constants.CLOSE):
+		if(self.getThumbPosition() == CLOSE):
 			logging.debug("IOUTILS::closeThumb - CLOSE")
-			self.fingerControl(constants.THUMB, constants.CLOSE)
+			self.fingerControl(THUMB, CLOSE)
 
 
 #==============================================================================
 # PCB CONTROLS                                                               
 #==============================================================================
 
-	# Initialize fingers position
-	def initialFingerControl(self, finger):
-	
-		logging.info("IOUTILS::initialFingerControl")
-		
-		input = interp(self.getPotentiometerValue(finger), [0, 1024], [constants.MOTOR_SPEED_MIN, constants.MOTOR_SPEED])
-		logging.info("IOUTILS::initialFingerControl - input: %f", input)
-
-		setpoint = 0
-		logging.info("IOUTILS::initialFingerControl - initialization setpoint: %f", setpoint)
-
-		#output = sys.maxsize
-		output = 0
-		
-		myPid = PID(input, output, setpoint, pid.PID_KP, pid.PID_KI, pid.PID_KD, pid.REVERSE)
-		motorDir = constants.OPEN
-		
-		#Turn on the PID loop
-		#myPid.setMode(AUTOMATIC)
-		myPid.set_output_limits(0,constants.MOTOR_SPEED)
-
-		while(abs(input - setpoint) >  pid.PID_LIMITS):
-
-			input = interp(self.getPotentiometerValue(finger), [0, 1024], [constants.MOTOR_SPEED_MIN, constants.MOTOR_SPEED])
-
-			myPid.compute()
-
-			self.motorControl(finger, motorDir, round(output))
-
-			input = interp(self.getPotentiometerValue(finger), [0, 1024], [constants.MOTOR_SPEED_MIN, constants.MOTOR_SPEED])
-
-			logging.info("IOUTILS::initialFingerControl - loop input: %f", input);
-			logging.info("IOUTILS::initialFingerControl - loop output: %f", output)
-
-		logging.info("IOUTILS::initialFingeinitialFingerControlrControlPID - Stop motor")
-		self.motorControl(finger, motorDir, constants.MOTOR_SPEED_MIN)
-
-
-
 	# Finger control method
 	def fingerControl(self, finger, motorDir):
 		
 		logging.info("IOUTILS::fingerControl")		
 		
-		input = interp(self.getPotentiometerValue(finger), [0, 1024], [constants.MOTOR_SPEED_MIN, constants.MOTOR_SPEED])		
+		input = interp(self.getPotentiometerValue(finger), [0, 1023], [MOTOR_SPEED_MIN, MOTOR_SPEED])		
 					   	
 		logging.info("IOUTILS::fingerControl - input: %f", input)
 		
 		#output = sys.maxsize
 		output = 0
 		
-		if motorDir == constants.OPEN:
-			setpoint = constants.MOTOR_SPEED_MIN
+		if motorDir == OPEN:
+			setpoint = MOTOR_SPEED_MIN
+			direction =  pid.REVERSE			
 			logging.info("IOUTILS::fingerControl - OPEN - final setpoint: %f", setpoint)	    	   	    	    					
 		else:
-			setpoint = constants.MOTOR_SPEED
+			setpoint = MOTOR_SPEED
+			direction =  pid.DIRECT
 			logging.info("IOUTILS::fingerControl - CLOSE - final setpoint: %f", setpoint)
-
 			  
 		# Initialize PID
-		myPid = PID(input, output, setpoint, pid.PID_KP, pid.PID_KI, pid.PID_KD, pid.DIRECT)
+		myPid = PID(input, output, setpoint, pid.PID_KP, pid.PID_KI, pid.PID_KD, direction)
     	 	    	 			
     	# Turn on the PID loop
 		# myPid.set_mode(AUTOMATIC)
-		myPid.set_output_limits(0, constants.MOTOR_SPEED)
+		myPid.set_output_limits(0, MOTOR_SPEED)
 		
 		while(abs(input - setpoint) >  pid.PID_LIMITS):
 			
-			input = interp(self.getPotentiometerValue(finger),[0,1023],[constants.MOTOR_SPEED_MIN, constants.MOTOR_SPEED])
+			input = interp(self.getPotentiometerValue(finger),[0,1023],[MOTOR_SPEED_MIN, MOTOR_SPEED])
 			
 			myPid.compute();
 			
@@ -287,13 +250,13 @@ class InputOutputOutils:
 			
 						
 		logging.info("IOUTILS::fingerControl - Stopping motor")			
-		self.motorControl(finger, motorDir, constants.MOTOR_SPEED_MIN)
+		self.motorControl(finger, motorDir, MOTOR_SPEED_MIN)
 
 
 	# Motor Control method
-	# INPUT : finger      <-- constants.MITTEN | constants.FOREFINGER | constants.THUMB
-	#         motorDir    <-- constants.OPEN   | constants.CLOSE
-	#         motorSpeed  <-- constants.MOTOR_SPEED_MIN  | constants.MOTOR_SPEED  | constants.MOTOR_SPEED_MAX       
+	# INPUT : finger      <-- MITTEN | FOREFINGER | THUMB
+	#         motorDir    <-- OPEN   | CLOSE
+	#         motorSpeed  <-- MOTOR_SPEED_MIN  | MOTOR_SPEED  | MOTOR_SPEED_MAX       
 	# OUTPUT: VOID
 	def motorControl(self, finger, motorDir, motorSpeed): 
 		logging.info("IOUTILS::motorControl")
@@ -301,7 +264,7 @@ class InputOutputOutils:
 	
 
 	# Read potentiometer position
-	# INPUT : finger      <-- constants.MITTEN | constants.FOREFINGER | constants.THUMB
+	# INPUT : finger      <-- MITTEN | FOREFINGER | THUMB
 	# OUTPUT: VOID
 	def getPotentiometerValue(self, finger):
 		logging.info("IOUTILS::getPotentiometerValue")
@@ -309,8 +272,8 @@ class InputOutputOutils:
 
 	# Retrieves a transition from MYO Sensor
 	# INPUT : VOID
-	# OUTPUT: transition <-- constants.TRANSITION_TO_INACTIVE | constants.TRANSITION_TO_IDLE  | constants.TRANSITION_TO_TONGS | 
-	#                        constants.TRANSITION_TO_FINGER   | constants.TRANSITION_TO_CLOSE | constants.TRANSITION_TO_FIST 
+	# OUTPUT: transition <-- TRANSITION_TO_INACTIVE | TRANSITION_TO_IDLE  | TRANSITION_TO_TONGS | 
+	#                        TRANSITION_TO_FINGER   | TRANSITION_TO_CLOSE | TRANSITION_TO_FIST 
 	def geTransitionFromMyo(self):		
 		logging.info("IOUTILS::geTransitionFromMyo")
 		return 0

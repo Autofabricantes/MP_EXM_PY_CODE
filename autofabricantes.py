@@ -24,6 +24,13 @@ class AutofabricantesExm:
         self.stateMachine.start()
       
   
+    def initializeHand(self):  
+
+        logging.info("\n---> Initialize hand")
+              
+        self.stateMachine.getTransition().transitionToIdle();
+  
+  
     def loop(self):
 
         while(True):

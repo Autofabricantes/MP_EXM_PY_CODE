@@ -22,7 +22,7 @@ PID_KI     = 1
 PID_KD     = 1
 
 # Angle limits [-30, 30]
-PID_LIMITS = 100
+PID_LIMITS = 30
 
 
 class PID(object):

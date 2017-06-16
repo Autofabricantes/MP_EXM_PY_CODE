@@ -1,9 +1,10 @@
 import logging
-import constants
 
 from state import State
 from transition import Transition
 from test import Test
+from constants import *
+
 import ioutils
 
 class StateMachine: 
@@ -27,7 +28,7 @@ class StateMachine:
 
         logging.debug("STM::start")
 
-        self.state.setCurrentState(constants.TRANSITION_TO_INACTIVE);
+        self.state.setCurrentState(TRANSITION_TO_INACTIVE);
         self.test.testInitializeLedStripe();
         
   
@@ -52,42 +53,44 @@ class StateMachine:
 
         logging.debug("STM::executeTrans: %i", transitionToPeform)
         
-        if(transitionToPeform == constants.TRANSITION_TO_INACTIVE):
+        if(transitionToPeform == TRANSITION_TO_INACTIVE):
             self.transition.transitionToInactive()
             self.test.testOutputWithLedStripe(0,0,0,0)
-            self.state.setCurrentState(constants.STATE_INACTIVE)
+            self.state.setCurrentState(STATE_INACTIVE)
                 
-        elif(transitionToPeform == constants.TRANSITION_TO_IDLE):
+        elif(transitionToPeform == TRANSITION_TO_IDLE):
             self.transition.transitionToIdle()
             self.test.testOutputWithLedStripe(0,102,204,0)
-            self.state.setCurrentState(constants.STATE_IDLE)
+            self.state.setCurrentState(STATE_IDLE)
         
-        elif(transitionToPeform == constants.TRANSITION_TO_TONGS):
-            if(currentState != constants.STATE_INACTIVE):
+        elif(transitionToPeform == TRANSITION_TO_TONGS):
+            if(currentState != STATE_INACTIVE):
                 self.transition.transitionToTongs()
                 self.test.testOutputWithLedStripe(0,0,128,255)
-                self.state.setCurrentState(constants.STATE_TONGS)
+                self.state.setCurrentState(STATE_TONGS)
 
-        elif(transitionToPeform == constants.TRANSITION_TO_FINGER):            
-            if(currentState != constants.STATE_INACTIVE):
+        elif(transitionToPeform == TRANSITION_TO_FINGER):            
+            if(currentState != STATE_INACTIVE):
                 self.transition.transitionToFinger()
                 self.test.testOutputWithLedStripe(0,255,255,0)
-                self.state.setCurrentState(constants.STATE_FINGER)        
+                self.state.setCurrentState(STATE_FINGER)        
         
-        elif(transitionToPeform == constants.TRANSITION_TO_CLOSE):                
-            if(currentState != constants.STATE_INACTIVE):
+        elif(transitionToPeform == TRANSITION_TO_CLOSE):                
+            if(currentState != STATE_INACTIVE):
                 self.transition.transitionToClose()
                 self.test.testOutputWithLedStripe(0,153,0,153)
-                self.state.setCurrentState(constants.STATE_CLOSE)        
+                self.state.setCurrentState(STATE_CLOSE)        
             
-        elif(transitionToPeform == constants.TRANSITION_TO_FIST):        
-            if(currentState != constants.STATE_INACTIVE):
+        elif(transitionToPeform == TRANSITION_TO_FIST):        
+            if(currentState != STATE_INACTIVE):
                 self.transition.transitionToFist()
                 self.test.testOutputWithLedStripe(0,204,0,0)
-                self.state.setCurrentState(constants.STATE_FIST)
+                self.state.setCurrentState(STATE_FIST)
 
         else:
             
             logging.debug("STM::executeTrans - Invalid transition: %i", transitionToPeform)
 
 
+    def getTransition(self):
+        return self.transition;

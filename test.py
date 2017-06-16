@@ -3,8 +3,7 @@ import time
 from neopixel import *
 import RPi.GPIO as GPIO
 
-import constants
-
+from constants import *
 
 #******************************************************************************
 # PUBLIC METHODS                                                             
@@ -17,10 +16,10 @@ class Test:
 		#GPIO.setmode(GPIO.BOARD)	
 		GPIO.setmode(GPIO.BCM)
 
-		GPIO.setup(constants.PIN_INPUT_SWITCH_0, GPIO.IN)
-		GPIO.setup(constants.PIN_INPUT_SWITCH_1, GPIO.IN)
-		GPIO.setup(constants.PIN_INPUT_SWITCH_2, GPIO.IN)
-		GPIO.setup(constants.PIN_INPUT_SWITCH_3, GPIO.IN)
+		GPIO.setup(PIN_INPUT_SWITCH_0, GPIO.IN)
+		GPIO.setup(PIN_INPUT_SWITCH_1, GPIO.IN)
+		GPIO.setup(PIN_INPUT_SWITCH_2, GPIO.IN)
+		GPIO.setup(PIN_INPUT_SWITCH_3, GPIO.IN)
 
 		
 		
@@ -47,10 +46,9 @@ class Test:
 	
 	def testInputForTransitionButtons(self):
 			
-		transition = constants.INVALID_TRANSITION
-		
-		
-		while (transition == constants.INVALID_TRANSITION):
+		transition = INVALID_TRANSITION
+				
+		while (transition == INVALID_TRANSITION):
 			
 			time.sleep(1)
 			
@@ -58,14 +56,14 @@ class Test:
 
 			# Podría incluir el boton de reset como INNACTIVE
 					
-			if(GPIO.input(constants.PIN_INPUT_SWITCH_0) == 1): 
-				transition = constants.STATE_SWITCH_0
-			elif(GPIO.input(constants.PIN_INPUT_SWITCH_1) == 1):
-				transition = constants.STATE_SWITCH_1
-			elif(GPIO.input(constants.PIN_INPUT_SWITCH_2) == 1):
-				transition = constants.STATE_SWITCH_2
-			elif(GPIO.input(constants.PIN_INPUT_SWITCH_3) == 1):
-				transition = constants.STATE_SWITCH_3
+			if(GPIO.input(PIN_INPUT_SWITCH_0) == 1): 
+				transition = STATE_SWITCH_0
+			elif(GPIO.input(PIN_INPUT_SWITCH_1) == 1):
+				transition = STATE_SWITCH_1
+			elif(GPIO.input(PIN_INPUT_SWITCH_2) == 1):
+				transition = STATE_SWITCH_2
+			elif(GPIO.input(PIN_INPUT_SWITCH_3) == 1):
+				transition = STATE_SWITCH_3
 			else:
 				logging.info("TEST::Any value red, begin again ")					
 						   
@@ -91,4 +89,6 @@ class Test:
 		
 		#ledStripe.setPixelColor(0, ledStripe.Color(r, g, b))
 		#ledStripe.show()
+				
+		
 	
