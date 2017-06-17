@@ -1,5 +1,7 @@
 import logging
 import time
+import sys
+
 from neopixel import *
 import RPi.GPIO as GPIO
 
@@ -13,7 +15,6 @@ class Test:
 	
 	def __init__(self):		
 		
-		#GPIO.setmode(GPIO.BOARD)	
 		GPIO.setmode(GPIO.BCM)
 
 		GPIO.setup(PIN_INPUT_SWITCH_0, GPIO.IN)
@@ -36,10 +37,10 @@ class Test:
 		time.sleep(1)
 		# read from keyboard
 
-		transition = int(input("Introduce a value: "))
+		transition = int(input("TEST::testInputForTransitionKeyboard - Introduce a value: "))
 		
 		if(transition == 6):
-			exit
+			sys.exit()
 		
 		return transition;
 	
@@ -48,26 +49,18 @@ class Test:
 			
 		transition = INVALID_TRANSITION
 				
-		while (transition == INVALID_TRANSITION):
-			
-			time.sleep(1)
-			
-			logging.info("TEST::Transition to... Press any button ")
+		logging.info("\nTEST::testInputForTransitionButtons - Transition to... Press any button ")
 
-			# Podría incluir el boton de reset como INNACTIVE
-					
-			if(GPIO.input(PIN_INPUT_SWITCH_0) == 1): 
-				transition = STATE_SWITCH_0
-			elif(GPIO.input(PIN_INPUT_SWITCH_1) == 1):
-				transition = STATE_SWITCH_1
-			elif(GPIO.input(PIN_INPUT_SWITCH_2) == 1):
-				transition = STATE_SWITCH_2
-			elif(GPIO.input(PIN_INPUT_SWITCH_3) == 1):
-				transition = STATE_SWITCH_3
-			else:
-				logging.info("TEST::Any value red, begin again ")					
+		while (transition == INVALID_TRANSITION):
+									 				
+			if(GPIO.input(PIN_INPUT_BUTTON_0) == 0): 
+				transition = STATE_BUTTON_0
+			elif(GPIO.input(PIN_INPUT_BUTTON_1) == 0):
+				transition = STATE_BUTTON_1										
 						   
-		return transition;
+		time.sleep(1)
+		
+		return transition
 	
 	
 
@@ -75,20 +68,30 @@ class Test:
 		
 		logging.info("TEST::testInitializeLedStripe")
 		
-		#ledStripe = Adafruit_NeoPixel(10, PIN_OUTPUT_LEDSTRIPE_RGB, NEO_GRB + NEO_KHZ800)
-		#ledStripe.begin()
+		"""
+		LED_COUNT   = 1       # Number of LED pixels.
+		LED_PIN     = 3       # GPIO pin connected to the pixels (must support PWM!).
+		LED_FREQ_HZ = 800000  # LED signal frequency in hertz (usually 800khz)
+		LED_DMA     = 5       # DMA channel to use for generating signal (try 5)
+		LED_INVERT  = False   # True to invert the signal (when using NPN transistor level shift)
+		
+		ledStripe = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT)
+		ledStripe.begin()
 
-		#ledStripe.setBrightness(50)
-		#ledStripe.setPixelColor(0, ledStripe.Color(0, 0, 0))
-		#ledStripe.show()
+		ledStripe.setBrightness(50)
+		ledStripe.setPixelColor(0, ledStripe.Color(0, 0, 0))
+		ledStripe.show()
+		"""
 
 	
 	def testOutputWithLedStripe(self, pos, r, g, b):
 		
 		logging.info("TEST::testOutputWithLedStripe")
 		
-		#ledStripe.setPixelColor(0, ledStripe.Color(r, g, b))
-		#ledStripe.show()
+		"""
+		ledStripe.setPixelColor(0, ledStripe.Color(r, g, b))
+		ledStripe.show()
+		"""
 				
 		
 	

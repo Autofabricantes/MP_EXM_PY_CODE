@@ -13,15 +13,16 @@ class Transition:
 
     def __init__(self, ioutils):
         logging.debug("TRANS::Transition")        
-        self.transitionToInactive()
         self.currentState = STATE_INACTIVE
         self.inputOutputUtils = ioutils
+        self.transitionToInactive()
+
 
     def reset(self):
         logging.debug("TRANS::reset")
-        self.transitionToInactive()
         self.currentState = STATE_INACTIVE
         self.inputOutputUtils = ioutils
+        self.transitionToInactive()
 
     # Gets the state selected by user so the transition will be performed
     def getTransitionToPerform(self, state):
@@ -44,42 +45,91 @@ class Transition:
 
     # Goes to idle state depending on the current one
     def transitionToIdle(self):
-        logging.debug("TRANS::trans2Idle")
-        threading.Thread(self.__openMitten).start()
-        threading.Thread(self.__openForefinger).start()
-        threading.Thread(self.__openThumb).start()
         
+        logging.debug("TRANS::trans2Idle")
+        
+        threadMitten = threading.Thread(target=self.__openMitten, name="Thread-Open-Mitten")
+        threadForefinger = threading.Thread(target=self.__openForefinger, name="Thread-Open-Forefinger")
+        threadThumb = threading.Thread(target=self.__openThumb, name="Thread-Open-Thumb")
+        
+        threadMitten.start()
+        threadForefinger.start()
+        threadThumb.start()
+        
+        threadMitten.join()
+        threadForefinger.join()
+        threadThumb.join()
         
     # Goes to tongs state depending on the current one
     def transitionToTongs(self):
+        
         logging.debug("TRANS::trans2Tongs")
-        threading.Thread(self.__openMitten).start()
-        threading.Thread(self.__closeForefinger).start()
-        threading.Thread(self.__closeThumb).start()
+        
+        threadMitten = threading.Thread(target=self.__openMitten, name="Thread-OPen-Mitten")
+        threadForefinger = threading.Thread(target=self.__closeForefinger, name="Thread-Close-Forefinger")
+        threadThumb = threading.Thread(target=self.__closeThumb, name="Thread-Close-Thumb")
+        
+        threadMitten.start()
+        threadForefinger.start()
+        threadThumb.start()
+        
+        threadMitten.join()
+        threadForefinger.join()
+        threadThumb.join()
 
 
     # Goes to finger state depending on the current one
     def transitionToFinger(self):
+        
         logging.debug("TRANS::trans2Finger")
-        threading.Thread(self.__closeMitten).start()
-        threading.Thread(self.__openForefinger).start()
-        threading.Thread(self.__closeThumb).start()
+        
+        threadMitten = threading.Thread(target=self.__closeMitten, name="Thread-Close-Mitten")
+        threadForefinger = threading.Thread(target=self.__openForefinger, name="Thread-Open-Forefinger")
+        threadThumb = threading.Thread(target=self.__closeThumb, name="Thread-Close-Thumb")
+        
+        threadMitten.start()
+        threadForefinger.start()
+        threadThumb.start()
+        
+        threadMitten.join()
+        threadForefinger.join()
+        threadThumb.join()
 
 
     # Goes to close state depending on the current one
     def transitionToClose(self):
+        
         logging.debug("TRANS::trans2Close")
-        threading.Thread(self.__closeMitten).start()
-        threading.Thread(self.__closeForefinger).start()
-        threading.Thread(self.__openThumb).start()
+        
+        threadMitten = threading.Thread(target=self.__closeMitten, name="Thread-Close-Mitten")
+        threadForefinger = threading.Thread(target=self.__closeForefinger, name="Thread-Close-Forefinger")
+        threadThumb = threading.Thread(target=self.__openThumb, name="Thread-Open-Thumb")
+        
+        threadMitten.start()
+        threadForefinger.start()
+        threadThumb.start()
+        
+        threadMitten.join()
+        threadForefinger.join()
+        threadThumb.join()
 
 
     # Goes to fist state depending on the current one
     def transitionToFist(self):
+        
         logging.debug("TRANS::trans2Fist")
-        threading.Thread(self.__closeMitten).start()
-        threading.Thread(self.__closeForefinger).start()
-        threading.Thread(self.__closeThumb).start()
+        
+        threadMitten = threading.Thread(target=self.__closeMitten, name="Thread-Close-Mitten")
+        threadForefinger = threading.Thread(target=self.__closeForefinger, name="Thread-Close-Forefinger")
+        threadThumb = threading.Thread(target=self.__closeThumb, name="Thread-Close-Thumb")
+        
+        threadMitten.start()
+        threadForefinger.start()
+        threadThumb.start()
+        
+        threadMitten.join()
+        threadForefinger.join()
+        threadThumb.join()
 
     
 #==============================================================================

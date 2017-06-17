@@ -45,13 +45,13 @@ class StateMachine:
     # Execute a transition
     def executeTransition(self):
 
-        logging.debug("STM::executeTrans")
+        logging.debug("STM::executeTransition")
     
         currentState = self.state.getCurrentState();
 
         transitionToPeform = self.transition.getTransitionToPerform(self.state)
 
-        logging.debug("STM::executeTrans: %i", transitionToPeform)
+        logging.debug("STM::executeTransition: %i", transitionToPeform)
         
         if(transitionToPeform == TRANSITION_TO_INACTIVE):
             self.transition.transitionToInactive()
@@ -89,7 +89,7 @@ class StateMachine:
 
         else:
             
-            logging.debug("STM::executeTrans - Invalid transition: %i", transitionToPeform)
+            logging.debug("STM::executeTransition - Invalid transition: %i", transitionToPeform)
 
 
     def getTransition(self):

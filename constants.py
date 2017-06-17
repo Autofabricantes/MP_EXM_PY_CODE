@@ -1,5 +1,6 @@
 import RPi.GPIO as GPIO
 
+
 #==============================================================================
 # GENERAL                                                                   
 #==============================================================================
@@ -102,10 +103,11 @@ PIN_OUTPUT_POWER_CUT    = 27
 # INPUT
 #------------------------------------------------------------------------------ 
 
-# TOVERIFY - SW_TAC_0: Button for shut down
+
+# SW_TAC_0: Button for open hand
 PIN_INPUT_BUTTON_0 = 19
 
-# TOVERIFY - SW_TAC_1: Button for reset
+# SW_TAC_1: Button for close hand
 PIN_INPUT_BUTTON_1 = 26
 
 # Switches to control states manually
@@ -144,11 +146,17 @@ PIN_BUS_ADC_CS = 7
 # SWITCHES' RELATED STATES
 #==============================================================================
 
-STATE_SWITCH_0 = STATE_IDLE
-STATE_SWITCH_1 = STATE_TONGS
-STATE_SWITCH_2 = STATE_FINGER
-STATE_SWITCH_3 = STATE_CLOSE
+STATE_BUTTON_0 = STATE_IDLE
+STATE_BUTTON_1 = STATE_CLOSE
 
-        
+#==============================================================================
+# FUNCTION MODES
+#==============================================================================
 
+# Keyboard control to initialize motors postion
+INIT_MODE = 0
+# Buttons control to test transitions
+TEST_MODE = 1
+# Myo operative control
+OPERATION_MODE = 2
 

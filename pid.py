@@ -1,199 +1,125 @@
-###########################################################################################################
-# Based on Arduino PID Library (Version 1.0.1) by Brett Beauregard <br3ttb@gmail.com> brettbeauregard.com #
-###########################################################################################################
+#!/usr/bin/python
+#
+# This file is part of IvPID.
+# Copyright (C) 2015 Ivmech Mechatronics Ltd. <bilgi@ivmech.com>
+#
+# IvPID is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# IvPID is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import datetime
-import sys
+# title           :PID.py
+# description     :python pid controller
+# author          :Caner Durmusoglu
+# date            :20151218
+# version         :0.1
+# notes           :
+# python_version  :2.7
+# ==============================================================================
 
-#==============================================================================
-# PID CONSTANTS
-#==============================================================================
+"""Ivmech PID Controller is simple implementation of a Proportional-Integral-Derivative (PID) Controller in the Python Programming Language.
+More information about PID Controller: http://en.wikipedia.org/wiki/PID_controller
+"""
+import time
 
-# Direction
-DIRECT  = 1
-REVERSE = 0
+class PID:
+    """PID Controller
+    """
 
-# Tuning PID parameters
-# Initial Proportional Gain
-PID_KP     = 1
-# Initial Integral Gain
-PID_KI     = 1
-# Initial Differential Gain
-PID_KD     = 1
+    def __init__(self, P=0.2, I=0.0, D=0.0):
 
-# Angle limits [-30, 30]
-PID_LIMITS = 30
+        self.Kp = P
+        self.Ki = I
+        self.Kd = D
 
+        self.sample_time = 0.00
+        self.current_time = time.time()
+        self.last_time = self.current_time
 
-class PID(object):
-        
-    def __init__(self, input, output, setpoint, kp, ki, kd, direct):
-        self._output = output
-        self._input = input
-        self._setpoint = setpoint
+        self.clear()
 
-        self._kp = 0
-        self._ki = 0
-        self._kd = 0
-        self._disp_kp = 0
-        self._disp_ki = 0
-        self._disp_kd = 0
-        self._i_term = None
-        self._auto = False
-        self._direct = None
-        self._sample_time = 100
-        self._sample_timedelta = None
-        self._output_value = None
-        self._last_input = None
-        self._out_min = -sys.maxsize - 1
-        self._out_max = sys.maxsize
+    def clear(self):
+        """Clears PID computations and coefficients"""
+        self.SetPoint = 0.0
 
-        self.set_output_limits(0, 255)
-        self.sample_time = 100  # milliseconds
-        self.direct = direct
-        self.set_tunings(kp, ki, kd)
-        self.last_time = datetime.datetime.now() - self._sample_timedelta
+        self.PTerm = 0.0
+        self.ITerm = 0.0
+        self.DTerm = 0.0
+        self.last_error = 0.0
 
+        # Windup Guard
+        self.int_error = 0.0
+        self.windup_guard = 20.0
 
-    def initialize(self):
-        self._i_term = self.output_value
-        self._last_input = self._input()
-        if self._i_term > self._out_max:
-            self._i_term = self._out_max
-        elif self._i_term < self._out_min:
-            self._i_term = self._out_min
+        self.output = 0.0
 
+    def update(self, feedback_value):
+        """Calculates PID value for given reference feedback
+        .. math::
+            u(t) = K_p e(t) + K_i \int_{0}^{t} e(t)dt + K_d {de}/{dt}
+        .. figure:: images/pid_1.png
+           :align:   center
+           Test PID with Kp=1.2, Ki=1, Kd=0.001 (test_pid.py)
+        """
+        error = self.SetPoint - feedback_value
 
-    def compute(self):
-        if not self.auto:
-            return False
-        now = datetime.datetime.now()
-        time_change = now - self.last_time
+        self.current_time = time.time()
+        delta_time = self.current_time - self.last_time
+        delta_error = error - self.last_error
 
-        if time_change < self._sample_timedelta:
-            return False
+        if (delta_time >= self.sample_time):
+            self.PTerm = self.Kp * error
+            self.ITerm += error * delta_time
 
-        input_value = self._input()
-        error = self.setpoint - input_value
-        self._i_term += self._ki * error
-        if self._i_term > self._out_max:
-            self._i_term = self._out_max
-        elif self._i_term < self._out_min:
-            self._i_term = self._out_min
+            if (self.ITerm < -self.windup_guard):
+                self.ITerm = -self.windup_guard
+            elif (self.ITerm > self.windup_guard):
+                self.ITerm = self.windup_guard
 
-        delta_input = input_value - self._last_input
-        output = self._kp * error + self._i_term - self._kd * delta_input
+            self.DTerm = 0.0
+            if delta_time > 0:
+                self.DTerm = delta_error / delta_time
 
-        if output > self._out_max:
-            output = self._out_max
-        elif output < self._out_min:
-            output = self._out_min
+            # Remember last time and last error for next calculation
+            self.last_time = self.current_time
+            self.last_error = error
 
-        self.output_value = output
+            self.output = self.PTerm + (self.Ki * self.ITerm) + (self.Kd * self.DTerm)
 
-        self._last_input = input_value
-        self.last_time = now
-        return True
+    def setKp(self, proportional_gain):
+        """Determines how aggressively the PID reacts to the current error with setting Proportional Gain"""
+        self.Kp = proportional_gain
 
-    @property
-    def output_value(self):
-        return self._output_value
+    def setKi(self, integral_gain):
+        """Determines how aggressively the PID reacts to the current error with setting Integral Gain"""
+        self.Ki = integral_gain
 
-    @output_value.setter
-    def output_value(self, value):
-        self._output_value = value
-        self._output(value)
+    def setKd(self, derivative_gain):
+        """Determines how aggressively the PID reacts to the current error with setting Derivative Gain"""
+        self.Kd = derivative_gain
 
-    def set_tunings(self, kp, ki, kd):
-        if kp < 0 or ki < 0 or kd < 0:
-            return
+    def setWindup(self, windup):
+        """Integral windup, also known as integrator windup or reset windup,
+        refers to the situation in a PID feedback controller where
+        a large change in setpoint occurs (say a positive change)
+        and the integral terms accumulates a significant error
+        during the rise (windup), thus overshooting and continuing
+        to increase as this accumulated error is unwound
+        (offset by errors in the other direction).
+        The specific problem is the excess overshooting.
+        """
+        self.windup_guard = windup
 
-        self._disp_kp = kp
-        self._disp_ki = ki
-        self._disp_kd = kd
-
-        sample_time_in_sec = self.sample_time / 1000.0
-        self._kp = kp
-        self._ki = ki * sample_time_in_sec
-        self._kd = kd * sample_time_in_sec
-
-        if not self.direct:
-            self._kp = 0 - self._kp
-            self._ki = 0 - self._ki
-            self._kd = 0 - self._kd
-
-    @property
-    def setpoint(self):
-        return self._setpoint
-
-    @setpoint.setter
-    def setpoint(self, value):
-        self._setpoint = value
-
-    @property
-    def sample_time(self):
-        return self._sample_time
-
-    @sample_time.setter
-    def sample_time(self, new_sample_time):
-        if new_sample_time <= 0:
-            return
-
-        ratio = new_sample_time / float(self._sample_time)
-        self._ki *= ratio
-        self._kd /= ratio
-        self._sample_time = new_sample_time
-        self._sample_timedelta = datetime.timedelta(milliseconds=new_sample_time)
-
-    def set_output_limits(self, out_min, out_max):
-        if out_min >= out_max:
-            return
-        self._out_min = out_min
-        self._out_max = out_max
-
-        if not self.auto:
-            return
-
-        if self.output_value > self._out_max:
-            self.output_value = self._out_max
-        elif self.output_value < self._out_min:
-            self.output_value = self._out_min
-
-        if self._i_term > self._out_max:
-            self._i_term = self._out_max
-        elif self._i_term < self._out_min:
-            self._i_term = self._out_min
-
-    @property
-    def auto(self):
-        return self._auto
-
-    @auto.setter
-    def auto(self, new_auto):
-        if new_auto != self._auto:
-            self.initialize()
-        self._auto = new_auto
-
-    @property
-    def direct(self):
-        return self._direct
-
-    @direct.setter
-    def direct(self, value):
-        if self.auto and value != self._direct:
-            self._kp = 0 - self._kp
-            self._ki = 0 - self._ki
-            self._kd = 0 - self._kd
-        self._direct = value
-
-    @property
-    def kp(self):
-        return self._disp_kp
-
-    @property
-    def ki(self):
-        return self._disp_ki
-
-    @property
-    def kd(self):
-        return self._disp_kd
+    def setSampleTime(self, sample_time):
+        """PID that should be updated at a regular interval.
+        Based on a pre-determined sampe time, the PID decides if it should compute or return immediately.
+        """
+        self.sample_time = sample_time

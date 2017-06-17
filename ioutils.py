@@ -25,7 +25,6 @@ class InputOutputOutils:
 		# State to retrieve current finger's position
 		self.currentState = State();
 		# Initialize raspberry board
-		# GPIO.setmode(GPIO.BOARD)	
 		GPIO.setmode(GPIO.BCM)
 			
 
@@ -50,6 +49,11 @@ class InputOutputOutils:
 		self.initializeInputElements()
 
 
+	def setMode(self, mode):
+		
+		logging.debug("IOUTILS::setTestMode: %i", mode)
+		self.mode = mode
+		
 
 #==============================================================================
 # INITIALIZATION OUTPUT METHODS                                              
@@ -60,10 +64,9 @@ class InputOutputOutils:
 
 		logging.info("IOUTILS::initOutput")
 		
-		GPIO.setup(PIN_OUTPUT_LED_VBAT_OK, GPIO.OUT)
+		GPIO.setup(PIN_OUTPUT_LED_VBAT_OK, GPIO.OUT)		
 		GPIO.setup(PIN_OUTPUT_LED_VBAT_LOW, GPIO.OUT)
-		GPIO.setup(PIN_OUTPUT_POWER_CUT, GPIO.OUT)		
-		
+		GPIO.setup(PIN_OUTPUT_POWER_CUT, GPIO.OUT)	
 		
 	# Reset of OUTPUT elements
 	def resetOutputElements(self):
@@ -138,14 +141,17 @@ class InputOutputOutils:
 	# returns: Transition value
 	def getTransitionToPerform(self, state): 
 
-		logging.debug("IOUTILS::getTrans")
+		logging.debug("IOUTILS::getTransitionToPerform")
 
 		self.currentState = state;
 
-		# Test Menu
-		#transitionTo = self.test.testInputForTransitionButtons()
-		#transitionTo = self.geTransitionFromMyo() 
-		transitionTo = self.test.testInputForTransitionKeyboard()
+		if self.mode == INIT_MODE: 
+			transitionTo = self.test.testInputForTransitionKeyboard()
+		elif self.mode == TEST_MODE:
+			transitionTo = self.test.testInputForTransitionButtons()
+		else:
+			transitionTo = self.geTransitionFromMyo()
+			
 
 		return transitionTo
 
@@ -208,61 +214,14 @@ class InputOutputOutils:
 # PCB CONTROLS                                                               
 #==============================================================================
 
-	# Finger control method
-	def fingerControl(self, finger, motorDir):
-		
-		logging.info("IOUTILS::fingerControl")		
-		
-		input = interp(self.getPotentiometerValue(finger), [0, 1023], [MOTOR_SPEED_MIN, MOTOR_SPEED])		
-					   	
-		logging.info("IOUTILS::fingerControl - input: %f", input)
-		
-		#output = sys.maxsize
-		output = 0
-		
-		if motorDir == OPEN:
-			setpoint = MOTOR_SPEED_MIN
-			direction =  pid.REVERSE			
-			logging.info("IOUTILS::fingerControl - OPEN - final setpoint: %f", setpoint)	    	   	    	    					
-		else:
-			setpoint = MOTOR_SPEED
-			direction =  pid.DIRECT
-			logging.info("IOUTILS::fingerControl - CLOSE - final setpoint: %f", setpoint)
-			  
-		# Initialize PID
-		myPid = PID(input, output, setpoint, pid.PID_KP, pid.PID_KI, pid.PID_KD, direction)
-    	 	    	 			
-    	# Turn on the PID loop
-		# myPid.set_mode(AUTOMATIC)
-		myPid.set_output_limits(0, MOTOR_SPEED)
-		
-		while(abs(input - setpoint) >  pid.PID_LIMITS):
-			
-			input = interp(self.getPotentiometerValue(finger),[0,1023],[MOTOR_SPEED_MIN, MOTOR_SPEED])
-			
-			myPid.compute();
-			
-			logging.info("IOUTILS::fingerControl - input: %f", input)
-			logging.info("IOUTILS::fingerControl - setpoint: %f", setpoint)  
-			logging.info("IOUTILS::fingerControl - output: %f", output)
-     		
-			self.motorControl(finger, motorDir, round(output))
-			
-						
-		logging.info("IOUTILS::fingerControl - Stopping motor")			
-		self.motorControl(finger, motorDir, MOTOR_SPEED_MIN)
-
-
-	# Motor Control method
+	# Finger control method	
 	# INPUT : finger      <-- MITTEN | FOREFINGER | THUMB
-	#         motorDir    <-- OPEN   | CLOSE
-	#         motorSpeed  <-- MOTOR_SPEED_MIN  | MOTOR_SPEED  | MOTOR_SPEED_MAX       
+	#         motorDir    <-- OPEN   | CLOSE	      
 	# OUTPUT: VOID
-	def motorControl(self, finger, motorDir, motorSpeed): 
+	def fingerControl(self, finger, motorDir): 
 		logging.info("IOUTILS::motorControl")
 		return 0
-	
-
+		
 	# Read potentiometer position
 	# INPUT : finger      <-- MITTEN | FOREFINGER | THUMB
 	# OUTPUT: VOID
