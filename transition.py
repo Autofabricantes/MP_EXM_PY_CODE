@@ -15,14 +15,14 @@ class Transition:
         logging.debug("TRANS::Transition")        
         self.currentState = STATE_INACTIVE
         self.inputOutputUtils = ioutils
-        self.transitionToInactive()
+        #self.transitionToInactive()
 
 
     def reset(self):
         logging.debug("TRANS::reset")
         self.currentState = STATE_INACTIVE
         self.inputOutputUtils = ioutils
-        self.transitionToInactive()
+        #self.transitionToInactive()
 
     # Gets the state selected by user so the transition will be performed
     def getTransitionToPerform(self, state):

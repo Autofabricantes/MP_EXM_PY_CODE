@@ -7,7 +7,7 @@ from ioutils import InputOutputOutils
 from statemachine import StateMachine
 from constants import *
 import constants
-
+ 
 class AutofabricantesExm:
     
     def __init__(self):        
@@ -20,8 +20,6 @@ class AutofabricantesExm:
         logging.info("\n---> Setup")
 
         self.inputOutputUtils = InputOutputOutils()
-        self.inputOutputUtils.initializeInputElements()
-        self.inputOutputUtils.initializeOutputElements()
         
         self.stateMachine = StateMachine(self.inputOutputUtils)
         self.stateMachine.start()
@@ -39,20 +37,16 @@ class AutofabricantesExm:
 
     def reset(self): 
 
-        logging.debug("\n---> Reset (%i)", self.counter)
-           
-        self.inputOutputUtils.initializeInputElements()
-
-        self.inputOutputUtils.initializeOutputElements()
-
-        self.stateMachine.reset();
+        logging.debug("\n---> Reset (%i)", self.counter)        
+        self.__init__()
+        
  
     # TODO - Read from switches and depending on the one is active,the operation mode is set
     # Now, only SWITCH_1 is working
     def setMode(self):
                 
-        input = GPIO.input(PIN_INPUT_SWITCH_2)
-        logging.info("\n---> PIN_INPUT_SWITCH_0 [%i]", input)
+        input = GPIO.input(GPIO_INPUT_SWITCH_2)
+        logging.info("\n---> GPIO_INPUT_SWITCH_0 [%i]", input)
           
         if(input == 0):                        
             self.operationMode = INIT_MODE
