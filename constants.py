@@ -160,9 +160,10 @@ B = 1
 
 # TODO - Verify values
 FINGER_MOTORS_MATRIX = (
-    #  THUMB  FORE  MITTEN  
-    (     6,     8,     10), # A
-    (     7,     9,     11)  # B
+    #     A      B
+    (     6,     7), # THUMB    
+    (     8,     9), # FORE
+    (    10,    11)  # MITTEN
 )
 
 

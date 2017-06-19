@@ -133,11 +133,11 @@ class Test:
 	def motor_control(duty_cycle):
 		
 		if(duty_cycle >= 0):
-			pwm.set_pwm(FINGER_MOTORS_MATRIX[A][THUMB], 0, duty_cycle)
-			pwm.set_pwm(FINGER_MOTORS_MATRIX[B][THUMB], 0, MOTOR_CTRL_MIN)  # set pin LOW
+			pwm.set_pwm(FINGER_MOTORS_MATRIX[THUMB][A], 0, duty_cycle)
+			pwm.set_pwm(FINGER_MOTORS_MATRIX[THUMB][B], 0, MOTOR_CTRL_MIN)  # set pin LOW
 			
 		else:
-			pwm.set_pwm(FINGER_MOTORS_MATRIX[A][THUMB], 0, abs(duty_cycle))
-			pwm.set_pwm(FINGER_MOTORS_MATRIX[B][THUMB], 0, MOTOR_CTRL_MAX)  # set pin HIGH
+			pwm.set_pwm(FINGER_MOTORS_MATRIX[THUMB][A], 0, abs(duty_cycle))
+			pwm.set_pwm(FINGER_MOTORS_MATRIX[THUMB][B], 0, MOTOR_CTRL_MAX)  # set pin HIGH
 
 

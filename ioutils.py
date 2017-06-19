@@ -235,16 +235,16 @@ class InputOutputOutils:
 	# TODO - TODO - Include motorDir and test
 	def motor_control(self, duty_cycle, finger, motorDir):
 
-		logging.debug("IOUTILS::motorControl - Motor Control A [%i]", FINGER_MOTORS_MATRIX[A][finger])
-		logging.debug("IOUTILS::motorControl - Motor Control B [%i]", FINGER_MOTORS_MATRIX[B][finger])
+		logging.debug("IOUTILS::motorControl - Motor Control A [%i]", FINGER_MOTORS_MATRIX[finger][A])
+		logging.debug("IOUTILS::motorControl - Motor Control B [%i]", FINGER_MOTORS_MATRIX[finger][B])
 	
 		if(duty_cycle >= 0):
-			pwm.set_pwm(FINGER_MOTORS_MATRIX[A][finger], 0, duty_cycle)		
-			pwm.set_pwm(FINGER_MOTORS_MATRIX[B][finger], 0, MOTOR_CTRL_MIN)  # set pin LOW
+			pwm.set_pwm(FINGER_MOTORS_MATRIX[finger][A], 0, duty_cycle)		
+			pwm.set_pwm(FINGER_MOTORS_MATRIX[finger][B], 0, MOTOR_CTRL_MIN)  # set pin LOW
 		else:
 			return
-			pwm.set_pwm(FINGER_MOTORS_MATRIX[A][finger], 0, abs(duty_cycle))
-			pwm.set_pwm(FINGER_MOTORS_MATRIX[B][finger], 0, MOTOR_CTRL_MAX)  # set pin HIGH
+			pwm.set_pwm(FINGER_MOTORS_MATRIX[finger][A], 0, abs(duty_cycle))
+			pwm.set_pwm(FINGER_MOTORS_MATRIX[finger][B], 0, MOTOR_CTRL_MAX)  # set pin HIGH
         	
         	
         	
