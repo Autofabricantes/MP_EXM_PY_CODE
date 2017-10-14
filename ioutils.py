@@ -13,19 +13,21 @@ from test import Test
 from state import State
 from pid import PID
 
+## Software communication with sensors
 class InputOutputOutils:
 
 #==============================================================================
 # INITIALIZATION METHODS                                               
 #==============================================================================
 
-	def __init__(self):
+    ## Initialization 
+	def __init__(self):		
 		
 		logging.debug("IOUTILS::init")
 		
-		# TODELETE - Test Class
+		## Test helper class attribute
 		self.test = Test();		
-		# State to retrieve current finger's position
+		## State to retrieve current finger's position
 		self.currentState = State();
 		
 		# Initialize raspberry board
@@ -45,15 +47,17 @@ class InputOutputOutils:
 		GPIO.setup(GPIO_OUTPUT_POWER_CUT, GPIO.OUT)
 		
 
+    ## Set mode 
+	#  @param mode
 	def setMode(self, mode):
 		
 		logging.debug("IOUTILS::setTestMode: %i", mode)
+		## Mode
 		self.mode = mode
 		
-	
-	# Reset elements
+	## Reset elements
 	def resetElements(self):
-
+		
 		logging.debug("IOUTILS::resetElements")
 		self.__init__()
 
@@ -62,13 +66,14 @@ class InputOutputOutils:
 # FINGERS POSITION                                                           
 #==============================================================================
 
-	# Detects mitten position from output elements feedback
-	# returns: OPEN|CLOSE
-	# TODO: Two solutions for fingers position
-	#  - Detect where the finger is
-	#  - Trust where the state says we are
+	## Detects mitten position from output elements feedback
+	#  @param self
+	#  @return OPEN|CLOSE
 	def getMittenPosition(self):
-
+	    
+	    # TODO: Two solutions for fingers position
+	    #     - Detect where the finger is
+		#     - Trust where the state says we are		
 		# TODO: What happens if finger position is diferent to current position?
 		# Tenedremos que revisar en que posicion se encuentar el dedo realmente para
 		# restaurar la posicion si es necesario.
@@ -76,15 +81,18 @@ class InputOutputOutils:
 
 		logging.info("IOUTILS::getMittenPos: %i", mittenPosition)
 
-		return mittenPosition;
+		return mittenPosition
 
-	# Detects forefinger position from output elements feedback
-	# returns: OPEN|CLOSE
-	# TODO: Two solutions for fingers position
-	#  - Detect where the finger is
-	#  - Trust where the state says we are
+	
+	## Detects forefinger position from output elements feedback
+	#  @return OPEN|CLOSE
 	def getForefingerPosition(self):
-
+		
+		# TODO: Two solutions for fingers position
+		#  - Detect where the finger is
+		#  - Trust where the state says we are
+	
+		
 		# TODO: What happens if finger position is diferent to current position?
 		# Tenedremos que revisar en que posicion se encuentar el dedo realmente para
 		# restaurar la posicion si es necesario.
@@ -93,14 +101,14 @@ class InputOutputOutils:
 		logging.debug("IOUTILS::getForefingerPos: %i", forefingerPosition)
 
 		return forefingerPosition
-
-	# Detects thumb position from output elements feedback
-	# returns: OPEN|CLOSE
-	# TODO: Two solutions for fingers position
-	#  - Detect where the finger is
-	#  - Trust where the state says we are
+	
+	## Detects thumb position from output elements feedback
+	#  @return  OPEN|CLOSE
 	def getThumbPosition(self):
 
+		# TODO: Two solutions for fingers position
+		#  - Detect where the finger is
+		#  - Trust where the state says we are
 		# TODO: What happens if finger position is diferent to current position?
 		# Tenedremos que revisar en que posicion se encuentar el dedo realmente para
 		# restaurar la posicion si es necesario.
@@ -111,16 +119,15 @@ class InputOutputOutils:
 		return thumbPosition
 
 
-
 #==============================================================================
 # TRANSITIONS                                                                
 #==============================================================================
 
-	# Identifies the state selected by user from input elements feedback
-	# An interpretation and treatment of readed data from sensors will be  
-	# needed to perform the required transition to get the selected state 
-	# without  ambiguity
-	# returns: Transition value
+	## Identifies the state selected by user from input elements feedback
+	#  An interpretation and treatment of readed data from sensors will be  
+	#  needed to perform the required transition to get the selected state 
+	#  without  ambiguity
+	#  @return Transition value
 	def getTransitionToPerform(self, state): 
 
 		logging.debug("IOUTILS::getTransitionToPerform")
@@ -137,7 +144,7 @@ class InputOutputOutils:
 
 		return transitionTo
 
-	# Moves mitten to OPEN position if necessary
+	## Moves mitten to OPEN position if necessary
 	def openMitten(self): 
 
 		logging.debug("IOUTILS::openMitten")
@@ -146,7 +153,7 @@ class InputOutputOutils:
 			logging.info("IOUTILS::openMitten-OPEN")
 			self.fingerControl(MITTEN, OPEN)
 							
-	# Moves mitten to CLOSE position if necessary
+	## Moves mitten to CLOSE position if necessary
 	def closeMitten(self):
 
 		logging.debug("IOUTILS::closeMitten")
@@ -155,7 +162,7 @@ class InputOutputOutils:
 			logging.info("IOUTILS::closeMitten - CLOSE");
 			self.fingerControl(MITTEN, CLOSE)
 	
-	# Moves forefinger to OPEN position if necessary
+	## Moves forefinger to OPEN position if necessary
 	def openForefinger(self): 
 
 		logging.debug("IOUTILS::openForefinger")
@@ -164,7 +171,7 @@ class InputOutputOutils:
 			logging.debug("IOUTILS::openForefinger - OPEN")
 			self.fingerControl(FOREFINGER, OPEN)
 			
-	# Moves forefinger to CLOSE position if necessary
+	## Moves forefinger to CLOSE position if necessary
 	def closeForefinger(self):
 
 		logging.debug("IOUTILS::closeForefinger")
@@ -173,7 +180,7 @@ class InputOutputOutils:
 			logging.debug("IOUTILS::closeForefinger - CLOSE")
 			self.fingerControl(FOREFINGER, CLOSE)
 			
-	# Moves thumb to OPEN position if necessary
+	## Moves thumb to OPEN position if necessary
 	def openThumb(self):
 
 		logging.debug("IOUTILS::openThumb");
@@ -182,7 +189,7 @@ class InputOutputOutils:
 			logging.debug("IOUTILS::openThumb - OPEN")
 			self.fingerControl(THUMB, OPEN)
 	
-	# Moves mitten to CLOSE position if necessary
+	## Moves mitten to CLOSE position if necessary
 	def closeThumb(self):
 
 		logging.debug("IOUTILS::closeThumb")
@@ -196,13 +203,12 @@ class InputOutputOutils:
 # PCB CONTROLS                                                               
 #==============================================================================
 
-	# Finger control method	
-	# INPUT : finger      <-- MITTEN | FOREFINGER | THUMB
-	#         motorDir    <-- OPEN   | CLOSE	      
-	# OUTPUT: VOID
-	# TODO - TODO - While needs an output condition?
+	## Finger control method
+	# @param finger   MITTEN | FOREFINGER | THUMB
+    # @param motorDir OPEN   | CLOSE	      		
 	def fingerControl(self, finger, motorDir): 
 		
+	    # TODO - TODO - While needs an output condition?
 		logging.info("IOUTILS::fingerControl")
 		
 		""" With these three lines of code, the control of a single motor is achieved.
@@ -232,7 +238,7 @@ class InputOutputOutils:
 			self.motor_control(duty_cycle, finger, motorDir)			
 			
 		
-	# TODO - TODO - Include motorDir and test
+	## Include motorDir and test
 	def motor_control(self, duty_cycle, finger, motorDir):
 
 		logging.debug("IOUTILS::motorControl - Motor Control A [%i]", FINGER_MOTORS_MATRIX[finger][A])
@@ -248,19 +254,14 @@ class InputOutputOutils:
         	
         	
         	
-	# Read potentiometer position
-	# INPUT : finger      <-- MITTEN | FOREFINGER | THUMB
-	# OUTPUT: VOID
-	# TODO - TODO
+	## Read potentiometer position
+	# @param finger MITTEN | FOREFINGER | THUMB
 	def getPotentiometerValue(self, finger):
 		logging.info("IOUTILS::getPotentiometerValue")			
 		return 0
 
-	# Retrieves a transition from MYO Sensor
-	# INPUT : VOID
-	# OUTPUT: transition <-- TRANSITION_TO_INACTIVE | TRANSITION_TO_IDLE  | TRANSITION_TO_TONGS | 
-	#                        TRANSITION_TO_FINGER   | TRANSITION_TO_CLOSE | TRANSITION_TO_FIST 
-	# TODO - TODO
+	## Retrieves a transition from MYO Sensor
+	# @return transition TRANSITION_TO_INACTIVE | TRANSITION_TO_IDLE  | TRANSITION_TO_TONGS | TRANSITION_TO_FINGER   | TRANSITION_TO_CLOSE | TRANSITION_TO_FIST 
 	def geTransitionFromMyo(self):		
 		logging.info("IOUTILS::geTransitionFromMyo")
 		return 0

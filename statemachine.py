@@ -7,12 +7,14 @@ from constants import *
 
 import ioutils
 
+## State machine class
 class StateMachine: 
 
 #==============================================================================
 # PUBLIC METHODS                                                             
 #==============================================================================
 
+    ## Initialization
     def __init__(self, ioutils):
         
         # State machine's state
@@ -23,7 +25,7 @@ class StateMachine:
         self.test = Test()
 
 
-    # Starts state machine
+    ## Starts state machine
     def start(self):
 
         logging.debug("STM::start")
@@ -32,7 +34,7 @@ class StateMachine:
         self.test.testInitializeLedStripe();
         
   
-    # Resets state machine
+    ## Resets state machine
     def reset(self):
 
         logging.debug("STM::reset")
@@ -42,7 +44,7 @@ class StateMachine:
         self.test.testInitializeLedStripe();        
         
 
-    # Execute a transition
+    ## Execute a transition
     def executeTransition(self):
 
         logging.debug("STM::executeTransition")
@@ -91,6 +93,6 @@ class StateMachine:
             
             logging.debug("STM::executeTransition - Invalid transition: %i", transitionToPeform)
 
-
+    ## Getter
     def getTransition(self):
         return self.transition;

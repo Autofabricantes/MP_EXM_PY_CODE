@@ -14,12 +14,15 @@ from constants import *
 # PUBLIC METHODS                                                             
 #******************************************************************************
 
+## Test class
 class Test:	
 	
+	## Initialization
 	def __init__(self):	
 		logging.info("TEST::init: ")					
 		#adc = MCP3008.MCP3008(clk=CLK, cs=CS, miso=MISO, mosi=MOSI)
 		
+	## Testing from keyboard
 	def testInputForTransitionKeyboard(self):
 			
 		logging.info("TEST::Transition to: ")
@@ -51,7 +54,7 @@ class Test:
 		
 		return transition;
 	
-	
+	## Testing from transition buttons
 	def testInputForTransitionButtons(self):
 			
 		transition = INVALID_TRANSITION
@@ -70,7 +73,7 @@ class Test:
 		return transition
 	
 	
-
+	## Initialization of leds
 	def testInitializeLedStripe(self):
 		
 		logging.info("TEST::testInitializeLedStripe")
@@ -90,7 +93,7 @@ class Test:
 		ledStripe.show()
 		"""
 
-	
+	## Verifing results by means leads
 	def testOutputWithLedStripe(self, pos, r, g, b):
 		
 		logging.info("TEST::testOutputWithLedStripe")
@@ -99,7 +102,8 @@ class Test:
 		ledStripe.setPixelColor(0, ledStripe.Color(r, g, b))
 		ledStripe.show()
 		"""
-				
+	
+	## Testing potentiometer		
 	def testPotentiometer(self):
 
 		adc = MCP3008(clk=PIN_CLK, cs=PIN_CS, miso=PIN_MISO, mosi=PIN_MOSI)
@@ -116,7 +120,7 @@ class Test:
 				print(err)
 				break
 
-
+	## Testing motor
 	def testMotor(self):
 		
 		pwm = PCA9685()
@@ -129,7 +133,8 @@ class Test:
 			except Exception as err:
 				print(err)
 				break
-		   			   
+		   			
+	## Testing motor control   
 	def motor_control(duty_cycle):
 		
 		if(duty_cycle >= 0):

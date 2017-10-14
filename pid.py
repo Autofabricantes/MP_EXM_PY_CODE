@@ -25,50 +25,58 @@
 # python_version  :2.7
 # ==============================================================================
 
-"""Ivmech PID Controller is simple implementation of a Proportional-Integral-Derivative (PID) Controller in the Python Programming Language.
-More information about PID Controller: http://en.wikipedia.org/wiki/PID_controller
-"""
 import time
 
 class PID:
-    """PID Controller
+    """ Ivmech PID Controller
+        PID Controller is simple implementation of a Proportional-Integral-Derivative (PID) 
+        Controller in the Python Programming Language.
+        More information about PID Controller: http://en.wikipedia.org/wiki/PID_controller
     """
-
+    ## Initialization
     def __init__(self, P=0.2, I=0.0, D=0.0):
 
+        ## Kp
         self.Kp = P
+        ## Ki
         self.Ki = I
+        ## kd
         self.Kd = D
 
+        ## sample_time
         self.sample_time = 0.00
+        ## current_time
         self.current_time = time.time()
+        ## last_time
         self.last_time = self.current_time
 
         self.clear()
 
+    ## Clears PID computations and coefficients
     def clear(self):
-        """Clears PID computations and coefficients"""
+
+        ## Setpoint
         self.SetPoint = 0.0
-
+        ## PTerm
         self.PTerm = 0.0
+        ## ITerm
         self.ITerm = 0.0
+        ## DTerm
         self.DTerm = 0.0
+        ## last_error
         self.last_error = 0.0
-
-        # Windup Guard
+        ## int_error
         self.int_error = 0.0
+        ## Windup Guard
         self.windup_guard = 20.0
-
+        ## output
         self.output = 0.0
 
+    ## Update
+    #  Calculates PID value for given reference feedback
+    # @param feedback_value
     def update(self, feedback_value):
-        """Calculates PID value for given reference feedback
-        .. math::
-            u(t) = K_p e(t) + K_i \int_{0}^{t} e(t)dt + K_d {de}/{dt}
-        .. figure:: images/pid_1.png
-           :align:   center
-           Test PID with Kp=1.2, Ki=1, Kd=0.001 (test_pid.py)
-        """
+        
         error = self.SetPoint - feedback_value
 
         self.current_time = time.time()
@@ -94,32 +102,39 @@ class PID:
 
             self.output = self.PTerm + (self.Ki * self.ITerm) + (self.Kd * self.DTerm)
 
+    ## setKp
+    # @param proportional_gain 
     def setKp(self, proportional_gain):
         """Determines how aggressively the PID reacts to the current error with setting Proportional Gain"""
         self.Kp = proportional_gain
 
+    ## Determines how aggressively the PID reacts to the current error with setting Integral Gain
+    # @param integral_gain
     def setKi(self, integral_gain):
-        """Determines how aggressively the PID reacts to the current error with setting Integral Gain"""
         self.Ki = integral_gain
 
+    ## Determines how aggressively the PID reacts to the current error with setting Derivative Gain
+    # @param derivative_gain
     def setKd(self, derivative_gain):
-        """Determines how aggressively the PID reacts to the current error with setting Derivative Gain"""
         self.Kd = derivative_gain
 
+    ## Integral windup, also known as integrator windup or reset windup,
+    #  refers to the situation in a PID feedback controller where
+    #  large change in setpoint occurs (say a positive change)
+    #  and the integral terms accumulates a significant error
+    #  during the rise (windup), thus overshooting and continuing
+    #  to increase as this accumulated error is unwound
+    #  (offset by errors in the other direction).
+    #  The specific problem is the excess overshooting.
+    # @param windup         
     def setWindup(self, windup):
-        """Integral windup, also known as integrator windup or reset windup,
-        refers to the situation in a PID feedback controller where
-        a large change in setpoint occurs (say a positive change)
-        and the integral terms accumulates a significant error
-        during the rise (windup), thus overshooting and continuing
-        to increase as this accumulated error is unwound
-        (offset by errors in the other direction).
-        The specific problem is the excess overshooting.
-        """
+
         self.windup_guard = windup
 
+    
+    ## PID that should be updated at a regular interval.
+    #  Based on a pre-determined sampe time, the PID decides if it should compute or return immediately.
+    # @param sample_time
     def setSampleTime(self, sample_time):
-        """PID that should be updated at a regular interval.
-        Based on a pre-determined sampe time, the PID decides if it should compute or return immediately.
-        """
+        
         self.sample_time = sample_time
