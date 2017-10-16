@@ -58,7 +58,7 @@ class AutofabricantesExm:
           
         if(input == 0):    
             ## Operation mode                    
-            self.operationMode = INIT_MODE
+            self.operationMode = OPERATION_MODE
         else:
             self.operationMode = TEST_MODE
             

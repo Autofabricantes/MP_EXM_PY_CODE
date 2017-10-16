@@ -36,7 +36,9 @@ class Test:
 		logging.info(" (6) TEST FOR POTENTIOMETER")
 		logging.info(" (7) TEST FOR MOTOR")
 				
-		logging.info(" (8) Exit")
+                logging.info(" (8) INITIALIZE SENSORS ")
+
+                logging.info(" (9) Exit")
 		time.sleep(1)		
 
 		transition = int(input("TEST::testInputForTransitionKeyboard - Introduce a value: "))
@@ -48,8 +50,11 @@ class Test:
 		elif(transition == 7):
 			self.testMotor()
 			self.testInputForTransitionKeyboard()
+
+                elif(transition == 8)
+                    self.testInputForTransitionKeyboard()
 						
-		if(transition == 8):
+                if(transition == 9):
 			sys.exit()
 		
 		return transition;

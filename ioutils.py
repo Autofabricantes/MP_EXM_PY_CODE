@@ -134,9 +134,7 @@ class InputOutputOutils:
 
 		self.currentState = state;
 
-		if self.mode == INIT_MODE: 
-			transitionTo = self.test.testInputForTransitionKeyboard()
-		elif self.mode == TEST_MODE:
+                if self.mode == TEST_MODE:
 			transitionTo = self.test.testInputForTransitionButtons()
 		else:
 			transitionTo = self.geTransitionFromMyo()
