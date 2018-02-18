@@ -3,32 +3,44 @@ import time
 import pid
 import sys
 
+
 import RPi.GPIO as GPIO
-from Adafruit_MCP3008 import MCP3008
-from Adafruit_PCA9685 import PCA9685
+#from Adafruit_MCP3008 import MCP3008
+#from Adafruit_PCA9685 import PCA9685
 
 from constants import *
 
 from test import Test
 from state import State
 from pid import PID
+from myoutils import Myoutils
 
 ## Software communication with sensors
 class InputOutputOutils:
 
 #==============================================================================
-# INITIALIZATION METHODS                                               
+# INITIALIZATION METHODS											   
 #==============================================================================
 
-    ## Initialization 
-	def __init__(self):		
+	## Initialization 
+	def __init__(self, mode):		
 		
 		logging.debug("IOUTILS::init")
-		
-		## Test helper class attribute
-		self.test = Test();		
+
+		# Setting mode
+		self.mode = mode
+				
 		## State to retrieve current finger's position
-		self.currentState = State();
+		self.currentState = State();		
+		      
+		## init MYO
+		self.myo = Myoutils(mode);
+
+		if(self.mode == OPERATION_MODE):
+			self.myo.startThreadMyo();
+				
+		## Test helper class attribute
+		self.test = Test(self.myo);		
 		
 		# Initialize raspberry board
 		GPIO.setmode(GPIO.BCM)
@@ -46,14 +58,6 @@ class InputOutputOutils:
 		GPIO.setup(GPIO_OUTPUT_LED_VBAT_LOW, GPIO.OUT)
 		GPIO.setup(GPIO_OUTPUT_POWER_CUT, GPIO.OUT)
 		
-
-    ## Set mode 
-	#  @param mode
-	def setMode(self, mode):
-		
-		logging.debug("IOUTILS::setTestMode: %i", mode)
-		## Mode
-		self.mode = mode
 		
 	## Reset elements
 	def resetElements(self):
@@ -63,17 +67,17 @@ class InputOutputOutils:
 
 
 #==============================================================================
-# FINGERS POSITION                                                           
+# FINGERS POSITION														   
 #==============================================================================
 
 	## Detects mitten position from output elements feedback
 	#  @param self
 	#  @return OPEN|CLOSE
 	def getMittenPosition(self):
-	    
-	    # TODO: Two solutions for fingers position
-	    #     - Detect where the finger is
-		#     - Trust where the state says we are		
+		
+		# TODO: Two solutions for fingers position
+		#	 - Detect where the finger is
+		#	 - Trust where the state says we are		
 		# TODO: What happens if finger position is diferent to current position?
 		# Tenedremos que revisar en que posicion se encuentar el dedo realmente para
 		# restaurar la posicion si es necesario.
@@ -120,7 +124,7 @@ class InputOutputOutils:
 
 
 #==============================================================================
-# TRANSITIONS                                                                
+# TRANSITIONS																
 #==============================================================================
 
 	## Identifies the state selected by user from input elements feedback
@@ -130,12 +134,12 @@ class InputOutputOutils:
 	#  @return Transition value
 	def getTransitionToPerform(self, state): 
 
-		logging.debug("IOUTILS::getTransitionToPerform")
+		logging.info("IOUTILS::getTransitionToPerform")
 
 		self.currentState = state;
 
-                if self.mode == TEST_MODE:
-			transitionTo = self.test.testInputForTransitionButtons()
+		if self.mode == TEST_MODE:
+			transitionTo = self.test.testInputForTransitionKeyboard()
 		else:
 			transitionTo = self.geTransitionFromMyo()
 			
@@ -196,17 +200,18 @@ class InputOutputOutils:
 			logging.debug("IOUTILS::closeThumb - CLOSE")
 			self.fingerControl(THUMB, CLOSE)
 
+		
 
 #==============================================================================
-# PCB CONTROLS                                                               
+# PCB CONTROLS															   
 #==============================================================================
 
 	## Finger control method
 	# @param finger   MITTEN | FOREFINGER | THUMB
-    # @param motorDir OPEN   | CLOSE	      		
+	# @param motorDir OPEN   | CLOSE		  		
 	def fingerControl(self, finger, motorDir): 
 		
-	    # TODO - TODO - While needs an output condition?
+		# TODO - TODO - While needs an output condition?
 		logging.info("IOUTILS::fingerControl")
 		
 		""" With these three lines of code, the control of a single motor is achieved.
@@ -220,19 +225,20 @@ class InputOutputOutils:
 		pid.SetPoint = 20;
 
 		# Initialize buses
-		adc = MCP3008(clk=PIN_CLK, cs=PIN_CS, miso=PIN_MISO, mosi=PIN_MOSI)
+		#adc = MCP3008(clk=PIN_CLK, cs=PIN_CS, miso=PIN_MISO, mosi=PIN_MOSI)
 
-		pwm = PCA9685()
-		pwm.set_pwm_freq(60)
+		#pwm = PCA9685()
+		#pwm.set_pwm_freq(60)
 
 		logging.debug("IOUTILS::fingerControl - Reading from ADC Channel [%i]", FINGER_CHANNELS_MATRIX[ADC][finger])
 		logging.debug("IOUTILS::fingerControl - Reading from PWM Channel [%i]", FINGER_CHANNELS_MATRIX[PWM][finger])
 					
 		while True:
-			feedback = adc.read_adc(FINGER_CHANNELS_MATRIX[ADC][finger])
-			pid.update(feedback)
-			pwm.set_pwm(FINGER_CHANNELS_MATRIX[PWM][finger], 0, pid.output)
-			duty_cycle = int(input("Enter PWM duty cycle (min: -4096, max: 4096): "))
+			#feedback = adc.read_adc(FINGER_CHANNELS_MATRIX[ADC][finger])
+			#pid.update(feedback)
+			#pwm.set_pwm(FINGER_CHANNELS_MATRIX[PWM][finger], 0, pid.output)
+			#duty_cycle = int(input("Enter PWM duty cycle (min: -4096, max: 4096): "))
+			duty_cycle = 0
 			self.motor_control(duty_cycle, finger, motorDir)			
 			
 		
@@ -243,15 +249,16 @@ class InputOutputOutils:
 		logging.debug("IOUTILS::motorControl - Motor Control B [%i]", FINGER_MOTORS_MATRIX[finger][B])
 	
 		if(duty_cycle >= 0):
-			pwm.set_pwm(FINGER_MOTORS_MATRIX[finger][A], 0, duty_cycle)		
-			pwm.set_pwm(FINGER_MOTORS_MATRIX[finger][B], 0, MOTOR_CTRL_MIN)  # set pin LOW
+			return
+			#pwm.set_pwm(FINGER_MOTORS_MATRIX[finger][A], 0, duty_cycle)		
+			#pwm.set_pwm(FINGER_MOTORS_MATRIX[finger][B], 0, MOTOR_CTRL_MIN)  # set pin LOW
 		else:
 			return
-			pwm.set_pwm(FINGER_MOTORS_MATRIX[finger][A], 0, abs(duty_cycle))
-			pwm.set_pwm(FINGER_MOTORS_MATRIX[finger][B], 0, MOTOR_CTRL_MAX)  # set pin HIGH
-        	
-        	
-        	
+			#pwm.set_pwm(FINGER_MOTORS_MATRIX[finger][A], 0, abs(duty_cycle))
+			#pwm.set_pwm(FINGER_MOTORS_MATRIX[finger][B], 0, MOTOR_CTRL_MAX)  # set pin HIGH
+			
+			
+			
 	## Read potentiometer position
 	# @param finger MITTEN | FOREFINGER | THUMB
 	def getPotentiometerValue(self, finger):
@@ -261,6 +268,8 @@ class InputOutputOutils:
 	## Retrieves a transition from MYO Sensor
 	# @return transition TRANSITION_TO_INACTIVE | TRANSITION_TO_IDLE  | TRANSITION_TO_TONGS | TRANSITION_TO_FINGER   | TRANSITION_TO_CLOSE | TRANSITION_TO_FIST 
 	def geTransitionFromMyo(self):		
-		logging.info("IOUTILS::geTransitionFromMyo")
-		return 0
+		
+		transition = self.myo.getEmg()
+		logging.info("IOUTILS::geTransitionFromMyo: %i", transition)
+		return transition
 	

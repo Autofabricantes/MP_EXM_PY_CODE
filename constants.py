@@ -193,12 +193,10 @@ STATE_BUTTON_1 = STATE_CLOSE
 # FUNCTION MODES
 #==============================================================================
 
-# Keyboard control to initialize motors postion
-INIT_MODE = 0
-# Buttons control to test transitions
-TEST_MODE = 1
+# Buttons control to test and initialize
+TEST_MODE = 0
 # Myo operative control
-OPERATION_MODE = 2
+OPERATION_MODE = 1
 
 
 #==============================================================================

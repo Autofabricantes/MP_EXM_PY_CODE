@@ -1,4 +1,5 @@
 import logging
+import time
 
 from state import State
 from transition import Transition
@@ -53,7 +54,7 @@ class StateMachine:
 
         transitionToPeform = self.transition.getTransitionToPerform(self.state)
 
-        logging.debug("STM::executeTransition: %i", transitionToPeform)
+        logging.info("STM::executeTransition: %i", transitionToPeform)
         
         if(transitionToPeform == TRANSITION_TO_INACTIVE):
             self.transition.transitionToInactive()
@@ -92,6 +93,12 @@ class StateMachine:
         else:
             
             logging.debug("STM::executeTransition - Invalid transition: %i", transitionToPeform)
+            
+       
+        logging.info("STM::waiting to finish transition")
+        time.sleep(5)
+
+            
 
     ## Getter
     def getTransition(self):

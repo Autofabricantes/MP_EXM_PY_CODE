@@ -14,12 +14,12 @@ class State:
 
 		logging.debug("STATE::State");
 		# Current state
-		self.currentState = STATE_INACTIVE;
+		self.currentState = STATE_IDLE;
 
 	## Resets current state
 	def reset(self):
 		logging.debug("STATE::reset")
-		self.currentState = STATE_INACTIVE
+		self.currentState = STATE_IDLE
 		
 	## Getter
 	def getCurrentState(self):

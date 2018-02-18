@@ -34,7 +34,7 @@ class Transition:
 
     ## Goes to innactive state
     def transitionToInactive(self):
-        logging.debug("TRANS::trans2Inactive")
+        logging.info("TRANS::trans2Inactive")
         
         logging.info("TRANS::transitionToIdle - Initialize mitten")
         self.inputOutputUtils.fingerControl(MITTEN, OPEN)            
@@ -48,7 +48,7 @@ class Transition:
     ## Goes to idle state depending on the current one
     def transitionToIdle(self):
         
-        logging.debug("TRANS::trans2Idle")
+        logging.info("TRANS::trans2Idle")
         
         threadMitten = threading.Thread(target=self.__openMitten, name="Thread-Open-Mitten")
         threadForefinger = threading.Thread(target=self.__openForefinger, name="Thread-Open-Forefinger")
@@ -65,7 +65,7 @@ class Transition:
     ## Goes to tongs state depending on the current one
     def transitionToTongs(self):
         
-        logging.debug("TRANS::trans2Tongs")
+        logging.info("TRANS::trans2Tongs")
         
         threadMitten = threading.Thread(target=self.__openMitten, name="Thread-OPen-Mitten")
         threadForefinger = threading.Thread(target=self.__closeForefinger, name="Thread-Close-Forefinger")
@@ -83,7 +83,7 @@ class Transition:
     ## Goes to finger state depending on the current one
     def transitionToFinger(self):
         
-        logging.debug("TRANS::trans2Finger")
+        logging.info("TRANS::trans2Finger")
         
         threadMitten = threading.Thread(target=self.__closeMitten, name="Thread-Close-Mitten")
         threadForefinger = threading.Thread(target=self.__openForefinger, name="Thread-Open-Forefinger")
@@ -101,7 +101,7 @@ class Transition:
     ## Goes to close state depending on the current one
     def transitionToClose(self):
         
-        logging.debug("TRANS::trans2Close")
+        logging.info("TRANS::trans2Close")
         
         threadMitten = threading.Thread(target=self.__closeMitten, name="Thread-Close-Mitten")
         threadForefinger = threading.Thread(target=self.__closeForefinger, name="Thread-Close-Forefinger")
@@ -119,7 +119,7 @@ class Transition:
     ## Goes to fist state depending on the current one
     def transitionToFist(self):
         
-        logging.debug("TRANS::trans2Fist")
+        logging.info("TRANS::trans2Fist")
         
         threadMitten = threading.Thread(target=self.__closeMitten, name="Thread-Close-Mitten")
         threadForefinger = threading.Thread(target=self.__closeForefinger, name="Thread-Close-Forefinger")
