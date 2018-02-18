@@ -48,3 +48,8 @@ https://linuxconfig.org/how-to-change-from-default-to-alternative-python-version
 ------------------------------------------
 https://learn.adafruit.com/adafruits-raspberry-pi-lesson-4-gpio-setup/configuring-i2c
 http://www.runeaudio.com/forum/how-to-enable-i2c-t1287.html
+
+-----------------------------------------
+- Sphinx code generator
+-------------------------------------------
+pip install Sphinx
