@@ -10,7 +10,9 @@ from statemachine import StateMachine
 from constants import *
 import constants
 
-# TODO: En el menu de pruebas meter todos los componentes a testear y que no nos embuclemos
+# TODO
+# En el menu de pruebas meter todos los componentes a testear
+# 
 
 ## Autofabricantes main class
 class AutofabricantesExm:
@@ -64,8 +66,8 @@ class AutofabricantesExm:
 # 		else:
 # 			self.operationMode = TEST_MODE
 		
-		self.mode = TEST_MODE
-		#self.mode = OPERATION_MODE
+		#self.mode = TEST_MODE
+		self.mode = OPERATION_MODE
 		
 		logging.debug("IOUTILS::mode: %d", self.mode)
 

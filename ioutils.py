@@ -34,11 +34,11 @@ class InputOutputOutils:
 		self.currentState = State();		
 		      
 		## init MYO
-		self.myo = Myoutils(mode);
+		self.myo = Myoutils(mode)
 
 		if(self.mode == OPERATION_MODE):
-			self.myo.startThreadMyo();
-				
+			self.myo.startThreadMyo()
+          
 		## Test helper class attribute
 		self.test = Test(self.myo);		
 		
@@ -134,7 +134,7 @@ class InputOutputOutils:
 	#  @return Transition value
 	def getTransitionToPerform(self, state): 
 
-		logging.info("IOUTILS::getTransitionToPerform")
+		logging.debug("IOUTILS::getTransitionToPerform")
 
 		self.currentState = state;
 
@@ -269,7 +269,7 @@ class InputOutputOutils:
 	# @return transition TRANSITION_TO_INACTIVE | TRANSITION_TO_IDLE  | TRANSITION_TO_TONGS | TRANSITION_TO_FINGER   | TRANSITION_TO_CLOSE | TRANSITION_TO_FIST 
 	def geTransitionFromMyo(self):		
 		
-		transition = self.myo.getEmg()
+		transition = self.myo.getMyoTransition()
 		logging.info("IOUTILS::geTransitionFromMyo: %i", transition)
 		return transition
 	

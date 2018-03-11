@@ -72,53 +72,24 @@ class Test:
 		return transition
 	
 	## Testing from transition buttons
-# 	def testInputForTransitionButtons(self):
-# 			
-# 		transition = INVALID_TRANSITION
-# 				
-# 		logging.info("\nTEST::testInputForTransitionButtons - Transition to... Press any button ")
-# 
-# 		while (transition == INVALID_TRANSITION):
-# 									 				
-# 			if(GPIO.input(GPIO_INPUT_BUTTON_0) == 0): 
-# 				transition = STATE_BUTTON_0
-# 			elif(GPIO.input(GPIO_INPUT_BUTTON_1) == 0):
-# 				transition = STATE_BUTTON_1										
-# 						   
-# 		time.sleep(1)
-# 		
-# 		return transition
-	
-	
-	## Initialization of leds
-	def testInitializeLedStripe(self):
-		
-		logging.info("TEST::testInitializeLedStripe")
-		
-		"""
-		LED_COUNT   = 1	   # Number of LED pixels.
-		LED_PIN	 = 3	   # GPIO pin connected to the pixels (must support PWM!).
-		LED_FREQ_HZ = 800000  # LED signal frequency in hertz (usually 800khz)
-		LED_DMA	 = 5	   # DMA channel to use for generating signal (try 5)
-		LED_INVERT  = False   # True to invert the signal (when using NPN transistor level shift)
-		
-		ledStripe = Adafruit_NeoPixel(LED_COUNT, LED_PIN, LED_FREQ_HZ, LED_DMA, LED_INVERT)
-		ledStripe.begin()
-
-		ledStripe.setBrightness(50)
-		ledStripe.setPixelColor(0, ledStripe.Color(0, 0, 0))
-		ledStripe.show()
-		"""
-
-	## Verifing results by means leads
-	def testOutputWithLedStripe(self, pos, r, g, b):
-		
-		logging.info("TEST::testOutputWithLedStripe")
-		
-		"""
-		ledStripe.setPixelColor(0, ledStripe.Color(r, g, b))
-		ledStripe.show()
-		"""
+	"""
+	def testInputForTransitionButtons(self):
+ 			
+ 		transition = INVALID_TRANSITION
+ 				
+ 		logging.info("\nTEST::testInputForTransitionButtons - Transition to... Press any button ")
+ 
+ 		while (transition == INVALID_TRANSITION):
+ 									 				
+ 			if(GPIO.input(GPIO_INPUT_BUTTON_0) == 0): 
+ 				transition = STATE_BUTTON_0
+ 			elif(GPIO.input(GPIO_INPUT_BUTTON_1) == 0):
+ 				transition = STATE_BUTTON_1										
+ 						   
+ 		time.sleep(1)
+ 		
+ 		return transition
+	"""
 	
 	## Testing potentiometer		
 	def testPotentiometer(self):

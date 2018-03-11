@@ -58,9 +58,17 @@ class Transition:
         threadForefinger.start()
         threadThumb.start()
         
+        """
+        threadMitten.run()
+        threadForefinger.run()
+        threadThumb.run()
+        """
+        
+        """
         threadMitten.join()
         threadForefinger.join()
         threadThumb.join()
+        """
         
     ## Goes to tongs state depending on the current one
     def transitionToTongs(self):
@@ -75,9 +83,17 @@ class Transition:
         threadForefinger.start()
         threadThumb.start()
         
+        """
+        threadMitten.run()
+        threadForefinger.run()
+        threadThumb.run()
+        """
+                
+        """
         threadMitten.join()
         threadForefinger.join()
         threadThumb.join()
+        """
 
 
     ## Goes to finger state depending on the current one
@@ -93,9 +109,17 @@ class Transition:
         threadForefinger.start()
         threadThumb.start()
         
+        """
+        threadMitten.run()
+        threadForefinger.run()
+        threadThumb.run()
+        """
+        
+        """
         threadMitten.join()
         threadForefinger.join()
         threadThumb.join()
+        """
 
 
     ## Goes to close state depending on the current one
@@ -111,9 +135,17 @@ class Transition:
         threadForefinger.start()
         threadThumb.start()
         
+        """
+        threadMitten.run()
+        threadForefinger.run()
+        threadThumb.run()
+        """
+        
+        """
         threadMitten.join()
         threadForefinger.join()
         threadThumb.join()
+        """
 
 
     ## Goes to fist state depending on the current one
@@ -129,9 +161,17 @@ class Transition:
         threadForefinger.start()
         threadThumb.start()
         
+        """ 
+        threadMitten.run()
+        threadForefinger.run()
+        threadThumb.run()
+        """
+        
+        """
         threadMitten.join()
         threadForefinger.join()
         threadThumb.join()
+        """
 
     
 #==============================================================================
@@ -140,31 +180,31 @@ class Transition:
 
     ## Moves mitten to OPEN position if necesary
     def __openMitten(self):
-        logging.debug("TRANS::openMitten")
+        logging.info("TRANS::openMitten")
         self.inputOutputUtils.openMitten()
   
     ## Moves mitten to CLOSE postion if necesary
     def __closeMitten(self):
-        logging.debug("TRANS::closeMitten")
+        logging.info("TRANS::closeMitten")
         self.inputOutputUtils.closeMitten()
 
     ## Moves forefinger to OPEN postion if necesary
     def __openForefinger(self):
-        logging.debug("TRANS::openForefinger")
+        logging.info("TRANS::openForefinger")
         self.inputOutputUtils.openForefinger()
         
     ## Moves forefinger to CLOSE postion if necesary
     def __closeForefinger(self):
-        logging.debug("TRANS::closeForefinger")
+        logging.info("TRANS::closeForefinger")
         self.inputOutputUtils.closeForefinger()
 
     ## Moves thumb to OPEN postion if necesary
     def __openThumb(self):
-        logging.debug("TRANS::openThumb")
+        logging.info("TRANS::openThumb")
         self.inputOutputUtils.openThumb()
         
     ## Moves thumb to CLOSE postion if necesary
     def __closeThumb(self):
-        logging.debug("TRANS::closeThumb")
+        logging.info("TRANS::closeThumb")
         self.inputOutputUtils.closeThumb()
 

@@ -59,6 +59,8 @@ TRANSITION_TO_FINGER   =  3
 TRANSITION_TO_CLOSE    =  4
 # Transition to fist state
 TRANSITION_TO_FIST     =  5
+# No identified movement intention
+TRANSITION_TO_NOTHING  = 6
 
 # Fingers position matrix from states definition
 FINGER_POSITION_MATRIX = (

@@ -34,7 +34,7 @@ class Myoutils:
         self.myo_device.services.set_mode(myo.EmgMode.FILT, myo.ImuMode.DATA, myo.ClassifierMode.ON)
         self.myo_device.add_emg_event_handler(self.process_emg)
         self.myo_device.add_emg_event_handler(self.led_emg)
-        self.myo_device.add_emg_event_handler(self.transition_emg)
+        # self.myo_device.add_emg_event_handler(self.transition_emg)
         self.myo_device.add_sync_event_handler(self.process_sync)
         
         self.open = True
@@ -56,15 +56,17 @@ class Myoutils:
                 continue
             logging.debug("MYOUTILS::runMyo - Waiting...")
   
+    """
     def getEmg(self):
         
         logging.info("MYOUTILS::getEmg - emg value - [%i][%i][%i][%i][%i][%i][%i][%i]", self.emg[0], self.emg[1], self.emg[2], self.emg[3], self.emg[4], self.emg[5], self.emg[6], self.emg[7])
             
         return self.transition
+    """
             
 
     def process_emg(self, emg):
-        #logging.debug(emg)
+        #logging.info(emg)
         self.emg = emg
 
     def process_imu(self, quat, acc, gyro):
@@ -84,22 +86,35 @@ class Myoutils:
             
             
                             
-    def transition_emg(self, emg):
+    def getMyoTransition(self):
         
-        lastTransition = self.transition 
+        lastTransition = self.transition
         
-        if(self.closeCondition(emg)):
-            self.transition = TRANSITION_TO_CLOSE
-        else:
-            self.transition = TRANSITION_TO_IDLE
+        logging.info("Listening...") 
+        
+        emg = self.emg
+        while (self.transition == lastTransition or 
+               self.transition == TRANSITION_TO_NOTHING):
+            
+            if(self.closeCondition(self.emg)):
+                self.transition = TRANSITION_TO_CLOSE            
+            else:
+                self.transition = TRANSITION_TO_IDLE
          
-        if(self.transition != lastTransition and self.mode == TEST_MODE):                
-                logging.info("MYOUTILS::transition_emg - [%i][%i][%i][%i][%i][%i][%i][%i]", emg[0], emg[1], emg[2], emg[3], emg[4], emg[5], emg[6], emg[7])
-                logging.info("MYOUTILS::transition_emg - %i", self.transition)
+            ## By the moment this conditions are the same
+            if(self.transition == lastTransition):     
+                self.transition = TRANSITION_TO_NOTHING
                 
-                
-                
-                
+            emg = self.emg
+            
+                   
+        logging.info("MYOUTILS::transition_emg - [%i][%i][%i][%i][%i][%i][%i][%i]", 
+                     emg[0], emg[1], emg[2], emg[3], emg[4], emg[5], emg[6], emg[7])        
+        logging.info("MYOUTILS::transition_emg - %i", self.transition)
+            
+        return self.transition
+    
+                    
     def closeCondition(self, emg):
         
         closeCondition = False
@@ -116,4 +131,5 @@ class Myoutils:
             closeCondition = True
         
         return closeCondition
-        
+    
+    
