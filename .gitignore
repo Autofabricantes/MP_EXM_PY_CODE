@@ -1,2 +1,3 @@
-documentation
+/documentation
 *.pyc
+__pycache__
