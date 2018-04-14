@@ -88,84 +88,101 @@ GPIO_OUTPUT_LED_VBAT_OK   = 4
 GPIO_OUTPUT_LED_VBAT_LOW = 17
 
 # PW_Q: Pin for the power cut control
-GPIO_OUTPUT_POWER_CUT    = 27
+#GPIO_OUTPUT_POWER_CUT    = 27
 
 
 #------------------------------------------------------------------------------
 # INPUT
 #------------------------------------------------------------------------------ 
 
+# Button to shut down the raspberry
+GPIO_SW_PUSH = 22
 
 # SW_TAC_0: Button for open hand
-GPIO_INPUT_BUTTON_0 = 19
+#GPIO_INPUT_BUTTON_0 = 19
 
 # SW_TAC_1: Button for close hand
-GPIO_INPUT_BUTTON_1 = 26
+#GPIO_INPUT_BUTTON_1 = 26
 
 # Switches to control states manually
 # SW_DIP_0
-GPIO_INPUT_SWITCH_0 = 22
+#GPIO_INPUT_SWITCH_0 = 22
 # SW_DIP_1
-GPIO_INPUT_SWITCH_1 =  5
+#GPIO_INPUT_SWITCH_1 =  5
 # SW_DIP_2
-GPIO_INPUT_SWITCH_2 =  6
+#GPIO_INPUT_SWITCH_2 =  6
 # SW_DIP_3
-GPIO_INPUT_SWITCH_3 = 13
+#GPIO_INPUT_SWITCH_3 = 13
 
 #------------------------------------------------------------------------------
 # BUSES
 #------------------------------------------------------------------------------ 
 
 # I2C PWM CIRCUITS (motors activation)
-# SDA: I2C Data
-GPIO_BUS_SDA = 2
+# SCA: I2C Data
+GPIO_BUS_SCA = 2
 # SCL: I2C Clock
 GPIO_BUS_SCL = 3
 
 # SPI: Serial Peripheral Interface Bus (Analog-Digital conversion)
 # MOSI: Master Output Slave Input, or Master Out Slave In (data output from master)
-GPIO_BUS_MOSI   = 10
+#GPIO_BUS_MOSI   = 10
 # MISO:  Master Input Slave Output, or Master In Slave Out (data output from slave)
-GPIO_BUS_MISO   =  9
+#GPIO_BUS_MISO   =  9
 # SCLK Serial Clock (output from master)
-GPIO_BUS_SCLK   = 11
+#GPIO_BUS_SCLK   = 11
 
 # ADC_CS: Chip Select (reading from potentiometers)
-GPIO_BUS_ADC_CS = 7
+#GPIO_BUS_ADC_CS = 7
 
-# Software SPI configuration for the MCP3008 - Physical pins
-PIN_CLK  = 18
-PIN_MISO = 23
-PIN_MOSI = 24
-PIN_CS   = 25
+
 
 
 #------------------------------------------------------------------------------
 # POTENTIOMETERS (ADC CIRCUIT PIONOUT)
 #------------------------------------------------------------------------------ 
 
+# Software SPI configuration for the MCP3008
+
+GPIO_POT_CLK = 18
+GPIO_POT_DOUT = 23
+GPIO_POT_DIN = 24
+GPIO_POT_CS = 25
+
 THUMB_MPOT_0 = 2
 FOREFINGER_MPOT_1 = 3 
 MITTEN_MPOT_2 = 4
 
 #------------------------------------------------------------------------------
-# MOTORS (PWM CIRCUIT PINOUT)
+# MOTORS 
 #------------------------------------------------------------------------------ 
+
+#GPIO_INA_1
+MOT_0_A_CTRL = 20
+#GPIO_INB_1
+MOT_0_B_CTRL = 21
+#GPIO_INA_2
+MOT_1_A_CTRL = 5
+#GPIO_INB_2
+MOT_1_B_CTRL = 6
+#GPIO_INA_3
+MOT_2_A_CTRL = 13
+#GPIO_INB_3
+MOT_2_B_CTRL = 19
 
 MOTOR_CTRL_MIN = 0  
 MOTOR_CTRL_MAX = 4096 
 
-
 # THUMB_MOT_X_A_CTRL and THUMB_MOT_X_B_CTRL
-A = 0
-B = 1 
+#A = 0
+#B = 1 
 
 # TODO - Verify values
 FINGER_MOTORS_MATRIX = (
-    #     A      B
-    (     6,     7), # THUMB    
-    (     8,     9), # FORE
-    (    10,    11)  # MITTEN
+    #        A                  B
+    (     MOT_0_A_CTRL,    MOT_0_A_CTRL), # THUMB    
+    (     MOT_1_B_CTRL,    MOT_1_B_CTRL), # FORE
+    (     MOT_2_B_CTRL,    MOT_2_B_CTRL)  # MITTEN
 )
 
 
@@ -175,6 +192,10 @@ FINGER_MOTORS_MATRIX = (
 
 ADC = 0
 PWM = 1
+
+PCA_I2C_ADDR = 0x40
+PWM_FRQUENCY = 60
+
 
 # TODO - Verify values
 FINGER_CHANNELS_MATRIX = (
@@ -205,8 +226,6 @@ OPERATION_MODE = 1
 # PID
 #==============================================================================
 
-PID_KP = 10
+PID_KP = 6
 PID_KI = 0
 PID_KD = 0
-
-

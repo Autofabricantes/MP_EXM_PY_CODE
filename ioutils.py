@@ -3,10 +3,11 @@ import time
 import pid
 import sys
 
-
 import RPi.GPIO as GPIO
-#from Adafruit_MCP3008 import MCP3008
-#from Adafruit_PCA9685 import PCA9685
+import Adafruit_GPIO.SPI as SPI
+
+from Adafruit_MCP3008 import MCP3008
+from Adafruit_PCA9685 import PCA9685  
 
 from constants import *
 
@@ -46,18 +47,34 @@ class InputOutputOutils:
 		GPIO.setmode(GPIO.BCM)
 		
 		# Initialize input elements	 		
-		GPIO.setup(GPIO_INPUT_BUTTON_0, GPIO.IN)
-		GPIO.setup(GPIO_INPUT_BUTTON_1, GPIO.IN)
-		GPIO.setup(GPIO_INPUT_SWITCH_0, GPIO.IN)
-		GPIO.setup(GPIO_INPUT_SWITCH_1, GPIO.IN)
-		GPIO.setup(GPIO_INPUT_SWITCH_2, GPIO.IN)
-		GPIO.setup(GPIO_INPUT_SWITCH_3, GPIO.IN)
+		#GPIO.setup(GPIO_INPUT_BUTTON_0, GPIO.IN)
+		#GPIO.setup(GPIO_INPUT_BUTTON_1, GPIO.IN)
+		#GPIO.setup(GPIO_INPUT_SWITCH_0, GPIO.IN)
+		#GPIO.setup(GPIO_INPUT_SWITCH_1, GPIO.IN)
+		#GPIO.setup(GPIO_INPUT_SWITCH_2, GPIO.IN)
+		#GPIO.setup(GPIO_INPUT_SWITCH_3, GPIO.IN)
 		
 		# Initialize output elements
 		GPIO.setup(GPIO_OUTPUT_LED_VBAT_OK, GPIO.OUT)		
 		GPIO.setup(GPIO_OUTPUT_LED_VBAT_LOW, GPIO.OUT)
 		GPIO.setup(GPIO_OUTPUT_POWER_CUT, GPIO.OUT)
 		
+		GPIO.setup(MOT_0_A_CTRL, GPIO.OUT)
+		GPIO.setup(MOT_0_B_CTRL, GPIO.OUT)
+		GPIO.setup(MOT_1_A_CTRL, GPIO.OUT)
+		GPIO.setup(MOT_1_B_CTRL, GPIO.OUT)
+		GPIO.setup(MOT_2_A_CTRL, GPIO.OUT)
+		GPIO.setup(MOT_2_B_CTRL, GPIO.OUT)
+		
+		# Initialize PWM
+		# TODO - Here or in fingerControl?
+		self.pwm = PCA9685.PCA9685(PCA_I2C_ADDR)
+		self.pwm.set_pwm_freq(PWM_FRQUENCY)
+		
+		#initialize ADC
+		# TODO - Here or in fingerControl?
+		self.adc = MCP3008.MCP3008(clk=CLK, cs=CS, miso=MISO, mosi=MOSI)
+
 		
 	## Reset elements
 	def resetElements(self):
@@ -221,49 +238,61 @@ class InputOutputOutils:
 		"""		
 		# Initialize PID
 		pid = PID(PID_KP, PID_KI, PID_KD)
+		
 		pid.setWindup = MOTOR_CTRL_MAX
-		pid.SetPoint = 20;
+		pid.setSampleTime = 0.2
+		pid.SetPoint = 800;
 
 		# Initialize buses
-		#adc = MCP3008(clk=PIN_CLK, cs=PIN_CS, miso=PIN_MISO, mosi=PIN_MOSI)
+		# Re-init will be necessary?
+		# self.adc = MCP3008.MCP3008(clk=CLK, cs=CS, miso=MISO, mosi=MOSI)
 
-		#pwm = PCA9685()
-		#pwm.set_pwm_freq(60)
+		# Initialize PWM
+		# Re-init will be necessary?
+		#self.pwm = PCA9685.PCA9685(PCA_I2C_ADDR)
+		#self.pwm.set_pwm_freq(PWM_FRQUENCY)
 
 		logging.debug("IOUTILS::fingerControl - Reading from ADC Channel [%i]", FINGER_CHANNELS_MATRIX[ADC][finger])
-		logging.debug("IOUTILS::fingerControl - Reading from PWM Channel [%i]", FINGER_CHANNELS_MATRIX[PWM][finger])
 					
 		while True:
-			#feedback = adc.read_adc(FINGER_CHANNELS_MATRIX[ADC][finger])
-			#pid.update(feedback)
-			#pwm.set_pwm(FINGER_CHANNELS_MATRIX[PWM][finger], 0, pid.output)
-			#duty_cycle = int(input("Enter PWM duty cycle (min: -4096, max: 4096): "))
-			duty_cycle = 0
+			feedback = getPotentiometerValyue()
+			pid.update(feedback)
+			duty_cycle = int(pid.output)
 			self.motor_control(duty_cycle, finger, motorDir)			
+    		
 			
 		
 	## Include motorDir and test
+	# To include motor direction management
 	def motor_control(self, duty_cycle, finger, motorDir):
-
+	
 		logging.debug("IOUTILS::motorControl - Motor Control A [%i]", FINGER_MOTORS_MATRIX[finger][A])
 		logging.debug("IOUTILS::motorControl - Motor Control B [%i]", FINGER_MOTORS_MATRIX[finger][B])
-	
+		logging.debug("IOUTILS::fingerControl - Reading from PWM Channel [%i]", FINGER_CHANNELS_MATRIX[PWM][finger])
+
+		
+		if(duty_cycle > MOTOR_CTRL_MAX):
+			duty_cycle = MOTOR_CTRL_MAX
+		elif(duty_cycle < -MOTOR_CTRL_MAX):
+			duty_cycle = -MOTOR_CTRL_MAX
+        
 		if(duty_cycle >= 0):
-			return
-			#pwm.set_pwm(FINGER_MOTORS_MATRIX[finger][A], 0, duty_cycle)		
-			#pwm.set_pwm(FINGER_MOTORS_MATRIX[finger][B], 0, MOTOR_CTRL_MIN)  # set pin LOW
+			pwm.set_pwm(FINGER_CHANNELS_MATRIX[PWM][finger], 0, duty_cycle)
+			GPIO.output(FINGER_MOTORS_MATRIX[finger][A], GPIO.LOW)  # set pin LOW
+			GPIO.output(FINGER_MOTORS_MATRIX[finger][B], GPIO.HIGH)  # set pin HIGH
 		else:
-			return
-			#pwm.set_pwm(FINGER_MOTORS_MATRIX[finger][A], 0, abs(duty_cycle))
-			#pwm.set_pwm(FINGER_MOTORS_MATRIX[finger][B], 0, MOTOR_CTRL_MAX)  # set pin HIGH
-			
-			
-			
+			pwm.set_pwm(FINGER_CHANNELS_MATRIX[PWM][finger], 0, abs(duty_cycle))  # set motor speed
+			GPIO.output(FINGER_MOTORS_MATRIX[finger][A], GPIO.HIGH)  # set pin HIGH
+			GPIO.output(FINGER_MOTORS_MATRIX[finger][B], GPIO.LOW)  # set pin LOW	
+				
+				
 	## Read potentiometer position
 	# @param finger MITTEN | FOREFINGER | THUMB
 	def getPotentiometerValue(self, finger):
-		logging.info("IOUTILS::getPotentiometerValue")			
-		return 0
+		
+		logging.info("IOUTILS::getPotentiometerValue")	
+		feedback = adc.read_adc(FINGER_CHANNELS_MATRIX[ADC][finger])
+		return feedback
 
 	## Retrieves a transition from MYO Sensor
 	# @return transition TRANSITION_TO_INACTIVE | TRANSITION_TO_IDLE  | TRANSITION_TO_TONGS | TRANSITION_TO_FINGER   | TRANSITION_TO_CLOSE | TRANSITION_TO_FIST 

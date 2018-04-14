@@ -12,7 +12,6 @@ import constants
 
 # TODO
 # En el menu de pruebas meter todos los componentes a testear
-# 
 
 ## Autofabricantes main class
 class AutofabricantesExm:

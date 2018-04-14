@@ -6,8 +6,8 @@ import threading
 from neopixel import *
 import RPi.GPIO as GPIO
 
-#from Adafruit_MCP3008 import MCP3008
-#from Adafruit_PCA9685 import PCA9685
+from Adafruit_MCP3008 import MCP3008
+from Adafruit_PCA9685 import PCA9685  
 
 from constants import *
 from myoutils import Myoutils
@@ -124,17 +124,21 @@ class Test:
 				break
 		   			
 	## Testing motor control   
-	def motor_control(self, duty_cycle):
-		
+	def motor_control(self, duty_cycle, finger, motorDir):
+	
+		logging.debug("IOUTILS::motorControl - Motor Control A [%i]", FINGER_MOTORS_MATRIX[THUMB][A])
+		logging.debug("IOUTILS::motorControl - Motor Control B [%i]", FINGER_MOTORS_MATRIX[THUMB][B])
+
 		if(duty_cycle >= 0):
-			return
-			#pwm.set_pwm(FINGER_MOTORS_MATRIX[THUMB][A], 0, duty_cycle)
-			#pwm.set_pwm(FINGER_MOTORS_MATRIX[THUMB][B], 0, MOTOR_CTRL_MIN)  # set pin LOW
-			
+			pwm.set_pwm(MOTOR_CTRL_MIN, 0, duty_cycle)  # set motor speed
+			GPIO.output(FINGER_MOTORS_MATRIX[THUMB][A], GPIO.LOW)  # set pin LOW
+			GPIO.output(FINGER_MOTORS_MATRIX[THUMB][B], GPIO.HIGH)  # set pin HIGH
 		else:
-			return
-			#pwm.set_pwm(FINGER_MOTORS_MATRIX[THUMB][A], 0, abs(duty_cycle))
-			#pwm.set_pwm(FINGER_MOTORS_MATRIX[THUMB][B], 0, MOTOR_CTRL_MAX)  # set pin HIGH
+			pwm.set_pwm(MOTOR_CTRL_MIN, 0, abs(duty_cycle))  # set motor speed
+			GPIO.output(FINGER_MOTORS_MATRIX[THUMB][A], GPIO.HIGH)  # set pin HIGH
+			GPIO.output(FINGER_MOTORS_MATRIX[THUMB][B], GPIO.LOW)  # set pin LOW	
+			
+			
 			
 	## Testing Mio
 	def testMyo(self):		
