@@ -57,7 +57,7 @@ class InputOutputOutils:
 		# Initialize output elements
 		GPIO.setup(GPIO_OUTPUT_LED_VBAT_OK, GPIO.OUT)		
 		GPIO.setup(GPIO_OUTPUT_LED_VBAT_LOW, GPIO.OUT)
-		GPIO.setup(GPIO_OUTPUT_POWER_CUT, GPIO.OUT)
+		#GPIO.setup(GPIO_OUTPUT_POWER_CUT, GPIO.OUT)
 		
 		GPIO.setup(MOT_0_A_CTRL, GPIO.OUT)
 		GPIO.setup(MOT_0_B_CTRL, GPIO.OUT)
@@ -68,12 +68,12 @@ class InputOutputOutils:
 		
 		# Initialize PWM
 		# TODO - Here or in fingerControl?
-		self.pwm = PCA9685.PCA9685(PCA_I2C_ADDR)
-		self.pwm.set_pwm_freq(PWM_FRQUENCY)
+		#self.pwm = PCA9685(PCA_I2C_ADDR)
+		#self.pwm.set_pwm_freq(PWM_FRQUENCY)
 		
 		#initialize ADC
 		# TODO - Here or in fingerControl?
-		self.adc = MCP3008.MCP3008(clk=CLK, cs=CS, miso=MISO, mosi=MOSI)
+		self.adc = MCP3008(clk=GPIO_BUS_SCLK, cs=GPIO_BUS_ADC_CS, miso=GPIO_BUS_MISO, mosi=GPIO_BUS_MOSI)
 
 		
 	## Reset elements
@@ -255,7 +255,7 @@ class InputOutputOutils:
 		logging.debug("IOUTILS::fingerControl - Reading from ADC Channel [%i]", FINGER_CHANNELS_MATRIX[ADC][finger])
 					
 		while True:
-			feedback = getPotentiometerValyue()
+			feedback = self.getPotentiometerValue(finger)
 			pid.update(feedback)
 			duty_cycle = int(pid.output)
 			self.motor_control(duty_cycle, finger, motorDir)			
@@ -277,11 +277,11 @@ class InputOutputOutils:
 			duty_cycle = -MOTOR_CTRL_MAX
         
 		if(duty_cycle >= 0):
-			pwm.set_pwm(FINGER_CHANNELS_MATRIX[PWM][finger], 0, duty_cycle)
+			#self.pwm.set_pwm(FINGER_CHANNELS_MATRIX[PWM][finger], 0, duty_cycle)
 			GPIO.output(FINGER_MOTORS_MATRIX[finger][A], GPIO.LOW)  # set pin LOW
 			GPIO.output(FINGER_MOTORS_MATRIX[finger][B], GPIO.HIGH)  # set pin HIGH
 		else:
-			pwm.set_pwm(FINGER_CHANNELS_MATRIX[PWM][finger], 0, abs(duty_cycle))  # set motor speed
+			#self.pwm.set_pwm(FINGER_CHANNELS_MATRIX[PWM][finger], 0, abs(duty_cycle))  # set motor speed
 			GPIO.output(FINGER_MOTORS_MATRIX[finger][A], GPIO.HIGH)  # set pin HIGH
 			GPIO.output(FINGER_MOTORS_MATRIX[finger][B], GPIO.LOW)  # set pin LOW	
 				
@@ -291,7 +291,7 @@ class InputOutputOutils:
 	def getPotentiometerValue(self, finger):
 		
 		logging.info("IOUTILS::getPotentiometerValue")	
-		feedback = adc.read_adc(FINGER_CHANNELS_MATRIX[ADC][finger])
+		feedback = self.adc.read_adc(FINGER_CHANNELS_MATRIX[ADC][finger])
 		return feedback
 
 	## Retrieves a transition from MYO Sensor

@@ -126,14 +126,13 @@ GPIO_BUS_SCL = 3
 
 # SPI: Serial Peripheral Interface Bus (Analog-Digital conversion)
 # MOSI: Master Output Slave Input, or Master Out Slave In (data output from master)
-#GPIO_BUS_MOSI   = 10
+GPIO_BUS_MOSI   = 10
 # MISO:  Master Input Slave Output, or Master In Slave Out (data output from slave)
-#GPIO_BUS_MISO   =  9
+GPIO_BUS_MISO   =  9
 # SCLK Serial Clock (output from master)
-#GPIO_BUS_SCLK   = 11
-
+GPIO_BUS_SCLK   = 11
 # ADC_CS: Chip Select (reading from potentiometers)
-#GPIO_BUS_ADC_CS = 7
+GPIO_BUS_ADC_CS = 7
 
 
 
@@ -143,7 +142,6 @@ GPIO_BUS_SCL = 3
 #------------------------------------------------------------------------------ 
 
 # Software SPI configuration for the MCP3008
-
 GPIO_POT_CLK = 18
 GPIO_POT_DOUT = 23
 GPIO_POT_DIN = 24
@@ -174,8 +172,8 @@ MOTOR_CTRL_MIN = 0
 MOTOR_CTRL_MAX = 4096 
 
 # THUMB_MOT_X_A_CTRL and THUMB_MOT_X_B_CTRL
-#A = 0
-#B = 1 
+A = 0
+B = 1 
 
 # TODO - Verify values
 FINGER_MOTORS_MATRIX = (

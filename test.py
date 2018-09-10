@@ -130,11 +130,11 @@ class Test:
 		logging.debug("IOUTILS::motorControl - Motor Control B [%i]", FINGER_MOTORS_MATRIX[THUMB][B])
 
 		if(duty_cycle >= 0):
-			pwm.set_pwm(MOTOR_CTRL_MIN, 0, duty_cycle)  # set motor speed
+			self.pwm.set_pwm(MOTOR_CTRL_MIN, 0, duty_cycle)  # set motor speed
 			GPIO.output(FINGER_MOTORS_MATRIX[THUMB][A], GPIO.LOW)  # set pin LOW
 			GPIO.output(FINGER_MOTORS_MATRIX[THUMB][B], GPIO.HIGH)  # set pin HIGH
 		else:
-			pwm.set_pwm(MOTOR_CTRL_MIN, 0, abs(duty_cycle))  # set motor speed
+			self.pwm.set_pwm(MOTOR_CTRL_MIN, 0, abs(duty_cycle))  # set motor speed
 			GPIO.output(FINGER_MOTORS_MATRIX[THUMB][A], GPIO.HIGH)  # set pin HIGH
 			GPIO.output(FINGER_MOTORS_MATRIX[THUMB][B], GPIO.LOW)  # set pin LOW	
 			
