@@ -53,3 +53,8 @@ http://www.runeaudio.com/forum/how-to-enable-i2c-t1287.html
 - Sphinx code generator
 -------------------------------------------
 pip install Sphinx
+
+-----------------------------------------
+- Provide Serial port outputs
+-------------------------------------------
+python -m pip install PySerial
